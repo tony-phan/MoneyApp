@@ -1,0 +1,19 @@
+*.log
+.env
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+**/appsettings.Development.json  # Optional, if it contains secrets
+**/appsettings.Local.json        # Optional, if used locally
+
+*.orig
+*.patch

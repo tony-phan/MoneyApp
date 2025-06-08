@@ -1,0 +1,20 @@
+<div class="main mat-typography" style="text-align: center; margin-top: 40px;">
+  @if (!registerMode) {
+    <h1>Sign up now</h1>
+    <p>Join to track and budget your personal finances!</p>
+    <div style="margin-top: 16px;">
+      <button mat-raised-button color="primary" (click)="registerToggle()" style="margin-right: 12px;">
+        Register
+      </button>
+      <button mat-raised-button color="accent">
+        Learn more
+      </button>
+    </div>
+  } @else {
+    <div style="display: flex; justify-content: center; margin-top: 32px;">
+      <mat-card style="width: 400px; padding: 16px;">
+        <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+      </mat-card>
+    </div>
+  }
+</div>

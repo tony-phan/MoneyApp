@@ -1,0 +1,22 @@
+.spacer {
+    flex: 1 1 auto;
+}  
+  
+.navbar-input {
+    height: 70px;
+    width: 250px;
+    margin: 0;
+    display: flex;
+    align-items: center; /* Ensure input is centered in form field */
+    padding-top: 20px;
+}
+
+.login-container {
+    display: flex;
+    align-items: center; /* 🔥 Vertically centers items */
+    gap: 10px;
+}
+
+.navbar-input .mat-mdc-text-field-wrapper {
+    border-radius: 8px !important; /* rounded corners */
+}

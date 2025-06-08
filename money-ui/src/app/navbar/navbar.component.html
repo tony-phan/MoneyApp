@@ -1,0 +1,27 @@
+<mat-toolbar color="primary">
+    <span>💰 Personal Finance Tracker</span>
+    <span class="spacer"></span>
+    
+    @if (accountService.currentUser()) {
+        <button mat-button routerLink="/">Home</button>
+        <button mat-button routerLink="/dashboard">Dashboard</button>
+        <button mat-button routerLink="/transactions">Transactions</button>
+        <button mat-button (click)="onLogout()">Logout</button>
+    }
+
+    @if (!accountService.currentUser()) {
+      <div class="login-container">
+        <mat-form-field appearance="fill" class="navbar-input">
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="username" />
+          </mat-form-field>
+        
+          <mat-form-field appearance="fill" class="navbar-input">
+            <mat-label>Password</mat-label>
+            <input matInput [(ngModel)]="password" type="password" />
+          </mat-form-field>
+          
+        <button mat-raised-button color="accent" (click)="onLogin()">Login</button>
+      </div> 
+    }
+</mat-toolbar>
