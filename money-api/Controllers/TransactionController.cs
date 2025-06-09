@@ -31,7 +31,7 @@ public class TransactionController : BaseApiController
     [HttpGet("{transactionHistoryId}")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByHistoryId(int transactionHistoryId)
     {
-        var transactions = await _transactionService.GetTransactionsByHistoryId(transactionHistoryId);
+        var transactions = await _transactionService.GetByTransactionHistoryId(transactionHistoryId);
         if (transactions == null || transactions.Count() == 0)
         {
             return NotFound(new { message = "No transactions found" });
@@ -43,7 +43,7 @@ public class TransactionController : BaseApiController
     [HttpGet("transactions")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByUserId([FromQuery] string userId)
     {
-        var response = await _transactionService.GetTransactionsByUserId(userId);
+        var response = await _transactionService.GetByUserId(userId);
         Console.WriteLine(response);
         if (response == null || response.Count() == 0)
         {
@@ -56,7 +56,7 @@ public class TransactionController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteTransactionById(int id)
     {
-        var result = await _transactionService.DeleteTransaction(id);
+        var result = await _transactionService.Delete(id);
         if (!result)
         {
             return NotFound($"Delete transaction with id {id} failed.");

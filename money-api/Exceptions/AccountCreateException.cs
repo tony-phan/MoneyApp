@@ -8,5 +8,9 @@ namespace money_api.Exceptions;
 
 public class AccountCreateException : Exception
 {
-    public AccountCreateException(IdentityResult result) : base($"Account creation failed. Error: {string.Join(",", result.Errors.Select(e => e.Description))}") { }
+    public IEnumerable<string> Errors { get; }
+    public AccountCreateException(IdentityResult result) : base("Account creation failed")
+    {
+        this.Errors = result.Errors.Select(e => e.Description);
+    }
 }

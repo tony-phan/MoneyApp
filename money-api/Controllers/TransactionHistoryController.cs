@@ -66,7 +66,7 @@ public class TransactionHistoryController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteTransactionHistoryById(int id)
     {
-        var deleted = await _transactionHistoryService.DeleteTransactionHistory(id);
+        var deleted = await _transactionHistoryService.Delete(id);
         if (!deleted)
         {
             return NotFound($"TransactionHistory with id {id} not found.");

@@ -23,6 +23,15 @@ public static class ExceptionMiddlewareExtensions
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     await context.Response.WriteAsJsonAsync(new { message = exception.Message });
                 }
+                else if (exception is AccountCreateException accountEx)
+                {
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    await context.Response.WriteAsJsonAsync(new
+                    {
+                        message = accountEx.Message,
+                        errors = accountEx.Errors
+                    });
+                }
                 else
                 {
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
