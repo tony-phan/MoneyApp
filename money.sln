@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "money-api", "money-api\money-api.csproj", "{B8D25402-6170-47FA-A2EC-FA4224D08B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "money_api", "money_api\money_api.csproj", "{B8D25402-6170-47FA-A2EC-FA4224D08B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "money-api.Tests", "money-api.Tests\money-api.Tests.csproj", "{84BD3D74-19A3-40FD-92E0-0CB56F6C8B8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "money_api.Tests", "money_api.Tests\money_api.Tests.csproj", "{84BD3D74-19A3-40FD-92E0-0CB56F6C8B8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
