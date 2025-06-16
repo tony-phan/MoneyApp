@@ -18,6 +18,7 @@ public interface ITransactionHistoryService
 {
     Task<TransactionHistoryDto> Create(TransactionHistoryCreateDto transactionHistoryCreateDto);
     Task<TransactionHistoryDto> GetById(int id);
+    Task<IEnumerable<TransactionHistoryDto>> GetByUserId(string userId);
     Task<IEnumerable<TransactionHistoryDto>> GetAll();
     Task<bool> Delete(int id);
 }
@@ -40,14 +41,13 @@ public class TransactionHistoryService : ITransactionHistoryService
 
     public async Task<TransactionHistoryDto> Create(TransactionHistoryCreateDto transactionHistoryCreateDto)
     {
-        var exists = await _transactionHistoryRepository.ExistsByUserIdMonthYear(transactionHistoryCreateDto.UserId, transactionHistoryCreateDto.Month, transactionHistoryCreateDto.Year);
-
-        if (exists)
-            throw new DuplicateTransactionHistoryException();
-
         var user = await _accountRepository.GetById(transactionHistoryCreateDto.UserId);
         if (user == null)
-            throw new AccountNotFoundException(transactionHistoryCreateDto.UserId);
+            throw new AccountNotFoundException("ID", transactionHistoryCreateDto.UserId);
+
+        var exists = await _transactionHistoryRepository.ExistsByUserIdMonthYear(transactionHistoryCreateDto.UserId, transactionHistoryCreateDto.Month, transactionHistoryCreateDto.Year);
+        if (exists)
+            throw new DuplicateTransactionHistoryException();
 
         var transactionHistoryEntity = new TransactionHistory
         {
@@ -97,5 +97,11 @@ public class TransactionHistoryService : ITransactionHistoryService
             throw new TransactionHistoryNotFoundException(id);
 
         return _mapper.Map<TransactionHistoryDto>(tH);
+    }
+
+    public async Task<IEnumerable<TransactionHistoryDto>> GetByUserId(string userId)
+    {
+        var transactionHistories = await _transactionHistoryRepository.GetAllByUserId(userId);
+        return transactionHistories.Select(tH => _mapper.Map<TransactionHistoryDto>(tH));
     }
 }

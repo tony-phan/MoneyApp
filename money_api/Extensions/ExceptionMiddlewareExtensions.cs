@@ -18,7 +18,7 @@ public static class ExceptionMiddlewareExtensions
                     context.Response.StatusCode = StatusCodes.Status409Conflict;
                     await context.Response.WriteAsJsonAsync(new { message = exception.Message });
                 }
-                else if (exception is TransactionHistoryNotFoundException || exception is AccountNotFoundException)
+                else if (exception is TransactionHistoryNotFoundException || exception is AccountNotFoundException || exception is TransactionNotFoundException)
                 {
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     await context.Response.WriteAsJsonAsync(new { message = exception.Message });

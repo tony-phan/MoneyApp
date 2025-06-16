@@ -15,6 +15,18 @@ public class ApplicationDbContext(DbContextOptions dbContextOptions) : IdentityD
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<AppUser>()
+            .HasMany(a => a.TransactionHistories)
+            .WithOne(tH => tH.User)
+            .HasForeignKey(tH => tH.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<TransactionHistory>()
+            .HasMany(tH => tH.Transactions)
+            .WithOne(t => t.TransactionHistory)
+            .HasForeignKey(t => t.TransactionHistoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<Transaction>()
             .Property(t => t.Amount)
             .HasColumnType("decimal(18, 2)");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,12 +18,10 @@ namespace money_api.Controllers;
 
 public class TransactionHistoryController : BaseApiController
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly ITransactionHistoryService _transactionHistoryService;
 
-    public TransactionHistoryController(UserManager<AppUser> userManager, ITransactionHistoryService transactionHistoryService)
+    public TransactionHistoryController(ITransactionHistoryService transactionHistoryService)
     {
-        _userManager = userManager;
         _transactionHistoryService = transactionHistoryService;
     }
 
@@ -54,7 +53,7 @@ public class TransactionHistoryController : BaseApiController
     }
 
     [Authorize]
-    [HttpGet("histories")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<TransactionHistoryDto>>> GetAllTransactionHistories()
     {
         var transactionHistories = await _transactionHistoryService.GetAll();

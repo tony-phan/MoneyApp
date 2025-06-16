@@ -11,7 +11,6 @@ public class TransactionDto
 {
     public int Id { get; set; }
     public decimal Amount { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public required string TransactionType { get; set; }
     public string? IncomeCategory { get; set; }
     public string? ExpenseCategory { get; set; }

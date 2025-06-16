@@ -17,17 +17,24 @@ public interface IAccountService
 {
     Task<AppUser> Create(AccountCreateDto accountCreateDto);
     Task<IEnumerable<AccountResponseDto>> GetAll();
-    Task<bool> Delete(string id);
+    Task<bool> DeleteById(string id);
+    Task<AppUser?> GetByUsername(string username);
 }
 
 public class AccountService : IAccountService
 {
+    private readonly ApplicationDbContext _dbContext;
     private readonly IAccountRepository _accountRepository;
+    private readonly ITransactionHistoryRepository _transactionHistoryRepository;
+    private readonly ITransactionRepository _transactionRepository;
     private readonly IMapper _mapper;
 
-    public AccountService(IAccountRepository accountRepository, IMapper mapper)
+    public AccountService(ApplicationDbContext dbContext, IAccountRepository accountRepository, ITransactionHistoryRepository transactionHistoryRepository, ITransactionRepository transactionRepository, IMapper mapper)
     {
+        _dbContext = dbContext;
         _accountRepository = accountRepository;
+        _transactionHistoryRepository = transactionHistoryRepository;
+        _transactionRepository = transactionRepository;
         _mapper = mapper;
     }
 
@@ -50,13 +57,22 @@ public class AccountService : IAccountService
         return users.Select(_mapper.Map<AccountResponseDto>).ToList();
     }
 
-    public async Task<bool> Delete(string id)
+    public async Task<bool> DeleteById(string id)
     {
         var user = await _accountRepository.GetById(id);
         if (user == null)
-            throw new AccountNotFoundException(id);
+            throw new AccountNotFoundException("ID", id);
 
         var result = await _accountRepository.Delete(user);
+        await _dbContext.SaveChangesAsync();
         return result.Succeeded;
+    }
+
+    public Task<AppUser?> GetByUsername(string username)
+    {
+        var result = _accountRepository.GetByUsername(username);
+        if (result == null)
+            throw new AccountNotFoundException("Username", username);
+        return result;
     }
 }

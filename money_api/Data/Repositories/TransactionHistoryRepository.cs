@@ -17,6 +17,7 @@ public interface ITransactionHistoryRepository
     void Delete(TransactionHistory transactionHistory);
     Task<IEnumerable<TransactionHistory>> GetAll();
     Task<bool> ExistsByUserIdMonthYear(string userId, int month, int year);
+    void DeleteRange(ICollection<TransactionHistory> transactionHistories);
 }
 
 public class TransactionHistoryRepository : ITransactionHistoryRepository
@@ -39,13 +40,17 @@ public class TransactionHistoryRepository : ITransactionHistoryRepository
         _dbContext.TransactionHistories.Remove(transactionHistory);
     }
 
+    public void DeleteRange(ICollection<TransactionHistory> transactionHistories)
+    {
+        _dbContext.TransactionHistories.RemoveRange(transactionHistories);
+    }
+
     public async Task<bool> ExistsByUserIdMonthYear(string userId, int month, int year)
     {
         var exists = await _dbContext.TransactionHistories.AnyAsync(th =>
             th.UserId == userId &&
             th.Month == month &&
             th.Year == year);
-
         return exists;
     }
 
@@ -59,7 +64,8 @@ public class TransactionHistoryRepository : ITransactionHistoryRepository
     public async Task<IEnumerable<TransactionHistory>> GetAllByUserId(string userId)
     {
         return await _dbContext.TransactionHistories
-            .Where(x => x.UserId == userId)
+            .Where(tH => tH.UserId == userId)
+            .Include(tH => tH.Transactions)
             .ToListAsync();
     }
 

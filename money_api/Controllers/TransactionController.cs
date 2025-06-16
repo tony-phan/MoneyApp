@@ -44,7 +44,6 @@ public class TransactionController : BaseApiController
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByUserId([FromQuery] string userId)
     {
         var response = await _transactionService.GetByUserId(userId);
-        Console.WriteLine(response);
         if (response == null || response.Count() == 0)
         {
             return NotFound(new { message = "No transactions found" });

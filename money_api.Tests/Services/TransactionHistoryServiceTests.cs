@@ -38,11 +38,15 @@ public class TransactionHistoryServiceTests
     [Fact]
     public async void GetTransactionHistoryById_ValidId_ReturnsDto()
     {
-        var fakeAppUser = await _accountRepoMock.Object.Create(new AppUser
+        var fakeAppUser = new AppUser
         {
             UserName = "username",
             Email = "email@yahoo.com"
-        }, "password");
+        };
+
+        _accountRepoMock
+            .Setup(repo => repo.GetByUsername("username"))
+            .ReturnsAsync(fakeAppUser);
 
         var fakeEntity = new TransactionHistory
         {

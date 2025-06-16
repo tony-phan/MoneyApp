@@ -7,11 +7,8 @@ public class TransactionCreateDto
 {
     public int TransactionHistoryId { get; set; }
     public decimal Amount { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public required string TransactionType { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public string? IncomeCategory { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public string? ExpenseCategory { get; set; }
     public string Description { get; set; } = string.Empty;
     [DataType(DataType.Date)]

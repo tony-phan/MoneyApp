@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using money_api.Data;
 using money_api.DTOs;
 using money_api.DTOs.AccountDtos;
+using money_api.DTOs.TransactionHistoryDtos;
 using money_api.Models;
 using money_api.Services;
 
@@ -19,12 +21,14 @@ public class AccountController : BaseApiController
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IAccountService _accountService;
+    private readonly ITransactionHistoryService _transactionHistoryService;
     private readonly ITokenService _tokenService;
 
-    public AccountController(UserManager<AppUser> userManager, IAccountService accountService, ITokenService tokenService)
+    public AccountController(UserManager<AppUser> userManager, IAccountService accountService, ITransactionHistoryService transactionHistoryService, ITokenService tokenService)
     {
         _userManager = userManager;
         _accountService = accountService;
+        _transactionHistoryService = transactionHistoryService;
         _tokenService = tokenService;
     }
 
@@ -43,8 +47,8 @@ public class AccountController : BaseApiController
     [HttpPost("login")]
     public async Task<ActionResult<AccountDto>> Login(AccountLoginDto loginDto)
     {
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+        var user = await _accountService.GetByUsername(loginDto.UserName);
+        if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
         {
             return BadRequest("Invalid user credentials");
         }
@@ -67,12 +71,30 @@ public class AccountController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteUser(string id)
     {
-        var result = await _accountService.Delete(id);
+        var result = await _accountService.DeleteById(id);
         if (!result)
         {
             return NotFound();
         }
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("{userId}/transactionHistories")]
+    public async Task<ActionResult<IEnumerable<TransactionHistoryDto>>> GetTransactionHistoriesByUserId(string userId)
+    {
+        string regexPattern = "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$";
+        if (!Regex.IsMatch(userId, regexPattern, RegexOptions.IgnoreCase))
+        {
+            return BadRequest(new { message = $"Invalid UserId '{userId}'" });
+        }
+
+        var transactionHistories = await _transactionHistoryService.GetByUserId(userId);
+        if (transactionHistories == null || transactionHistories.Count() == 0)
+        {
+            return NotFound(new { message = $"No transaction histories found for user ID '{userId}'" });
+        }
+        return Ok(transactionHistories);
     }
 }
 

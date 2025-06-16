@@ -7,5 +7,11 @@ namespace money_api.Exceptions;
 
 public class AccountNotFoundException : Exception
 {
-    public AccountNotFoundException(string id) : base($"Account with id {id} does not exist.") { }
+    public string FieldName { get; set; }
+    public string FieldValue { get; set; }
+    public AccountNotFoundException(string fieldName, string fieldValue) : base($"Account with {fieldName} '{fieldValue}' does not exist.")
+    {
+        FieldName = fieldName;
+        FieldValue = fieldValue;
+    }
 }

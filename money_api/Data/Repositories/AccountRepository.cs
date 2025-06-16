@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using money_api.DTOs.AccountDtos;
+using money_api.Exceptions;
 using money_api.Models;
 
 namespace money_api.Data.Repositories;
@@ -13,6 +14,7 @@ public interface IAccountRepository
 {
     Task<IdentityResult> Create(AppUser user, string password);
     Task<AppUser?> GetById(string id);
+    Task<AppUser?> GetByUsername(string username);
     Task<IEnumerable<AppUser>> GetAll();
     Task<AppUser?> Update(string id, AppUser updatedUser);
     Task<IdentityResult> Delete(AppUser user);
@@ -45,6 +47,11 @@ public class AccountRepository : IAccountRepository
     public async Task<AppUser?> GetById(string id)
     {
         return await _userManager.FindByIdAsync(id);
+    }
+
+    public async Task<AppUser?> GetByUsername(string username)
+    {
+        return await _userManager.FindByNameAsync(username);
     }
 
     public async Task<AppUser?> Update(string id, AppUser updatedUser)
