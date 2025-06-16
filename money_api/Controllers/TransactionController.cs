@@ -40,18 +40,6 @@ public class TransactionController : BaseApiController
     }
 
     [Authorize]
-    [HttpGet("transactions")]
-    public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByUserId([FromQuery] string userId)
-    {
-        var response = await _transactionService.GetByUserId(userId);
-        if (response == null || response.Count() == 0)
-        {
-            return NotFound(new { message = "No transactions found" });
-        }
-        return Ok(response);
-    }
-
-    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> DeleteTransactionById(int id)
     {

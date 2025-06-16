@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using money_api.Data;
 using money_api.DTOs;
 using money_api.DTOs.AccountDtos;
+using money_api.DTOs.TransactionDtos;
 using money_api.DTOs.TransactionHistoryDtos;
 using money_api.Models;
 using money_api.Services;
@@ -22,13 +23,15 @@ public class AccountController : BaseApiController
     private readonly UserManager<AppUser> _userManager;
     private readonly IAccountService _accountService;
     private readonly ITransactionHistoryService _transactionHistoryService;
+    private readonly ITransactionService _transactionService;
     private readonly ITokenService _tokenService;
 
-    public AccountController(UserManager<AppUser> userManager, IAccountService accountService, ITransactionHistoryService transactionHistoryService, ITokenService tokenService)
+    public AccountController(UserManager<AppUser> userManager, IAccountService accountService, ITransactionHistoryService transactionHistoryService, ITransactionService transactionService, ITokenService tokenService)
     {
         _userManager = userManager;
         _accountService = accountService;
         _transactionHistoryService = transactionHistoryService;
+        _transactionService = transactionService;
         _tokenService = tokenService;
     }
 
@@ -95,6 +98,18 @@ public class AccountController : BaseApiController
             return NotFound(new { message = $"No transaction histories found for user ID '{userId}'" });
         }
         return Ok(transactionHistories);
+    }
+
+    [Authorize]
+    [HttpGet("{userId}/transactions")]
+    public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByUserId(string userId)
+    {
+        var response = await _transactionService.GetByUserId(userId);
+        if (response == null || response.Count() == 0)
+        {
+            return NotFound(new { message = "No transactions found" });
+        }
+        return Ok(response);
     }
 }
 
