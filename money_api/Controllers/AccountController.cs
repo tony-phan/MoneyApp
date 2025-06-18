@@ -105,10 +105,6 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByUserId(string userId)
     {
         var response = await _transactionService.GetByUserId(userId);
-        if (response == null || response.Count() == 0)
-        {
-            return NotFound(new { message = "No transactions found" });
-        }
         return Ok(response);
     }
 }

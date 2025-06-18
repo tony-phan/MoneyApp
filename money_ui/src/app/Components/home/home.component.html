@@ -1,11 +1,13 @@
 <div class="main mat-typography" style="text-align: center; margin-top: 40px;">
   @if (!registerMode) {
-    <h1>Sign up now</h1>
-    <p>Join to track and budget your personal finances!</p>
+    <h1>Welcome</h1>
+    <p>Track and budget your personal finances!</p>
     <div style="margin-top: 16px;">
-      <button mat-raised-button color="primary" (click)="registerToggle()" style="margin-right: 12px;">
+      @if (!this.isLoggedIn()) {
+        <button mat-raised-button color="primary" (click)="registerToggle()" style="margin-right: 12px;">
         Register
       </button>
+      }
       <button mat-raised-button color="accent">
         Learn more
       </button>

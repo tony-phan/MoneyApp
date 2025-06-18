@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, model, signal } from '@angular/core';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { User } from '../_models/user';
+import { Transaction } from '../_models/transaction';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,13 @@ export class AccountService {
         return user;
       })
     );
+  }
+
+  getUserTransactions(userId: string): Observable<Transaction[]> {
+    const token = this.currentUser()?.token;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Transaction[]>(this.baseUrl + `/${userId}/transactions`, { headers });
   }
 }

@@ -38,8 +38,6 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDto> Create(TransactionCreateDto transactionCreateDto)
     {
-        // NEED TO VALIDATE THAT THE USER CREATING THE TRANSACTiON is also associated with the transaction history
-
         var transactionHistory = await _transactionHistoryRepository.GetById(transactionCreateDto.TransactionHistoryId);
         if (transactionHistory == null)
             throw new TransactionHistoryNotFoundException(transactionCreateDto.TransactionHistoryId);

@@ -1,11 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NavbarComponent } from "../navbar/navbar.component";
-import { AccountService } from '../services/account.service';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

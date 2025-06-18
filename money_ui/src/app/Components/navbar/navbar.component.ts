@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AccountService } from '../services/account.service';
-import { MaterialModule } from '../material.module';
+import { AccountService } from '../../services/account.service';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-navbar',
@@ -19,12 +19,14 @@ export class NavbarComponent {
   onLogin() {
     let payload = { username: this.username, password: this.password };
     this.accountService.login(payload).subscribe({
-      next: response => console.log('response: ', response),
+      next: response => { 
+        console.log('response: ', response);
+        this.username = '';
+        this.password = '';
+        this.router.navigate(['/']);
+      },
       error: error => console.log('error: ', error)
     });
-    this.username = '';
-    this.password = '';
-    this.router.navigate(['/']);
   }
 
   onLogout() {

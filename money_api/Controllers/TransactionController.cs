@@ -50,4 +50,11 @@ public class TransactionController : BaseApiController
         }
         return NoContent();
     }
+
+    // [Authorize]
+    // [HttpPut("{id}")]
+    // public async Task<ActionResult<TransactionDto>> UpdateTransaction(int id, TransactionUpdateDto transactionUpdateDto)
+    // {
+
+    // }
 }

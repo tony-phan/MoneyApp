@@ -15,11 +15,4 @@ export class TransactionService {
 
   constructor() { }
 
-  getUserTransactions(userId: string): Observable<Transaction[]> {
-    const token = this.authService.currentUser()?.token;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<Transaction[]>(this.baseUrl + `/transactions?userId=${userId}`, { headers });
-  }
 }

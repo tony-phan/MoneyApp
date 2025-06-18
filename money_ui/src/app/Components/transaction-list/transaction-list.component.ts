@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NavbarComponent } from "../../navbar/navbar.component";
 import { TransactionService } from '../../services/transaction.service';
 import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-transaction-list',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.css'
 })
@@ -16,7 +15,7 @@ export class TransactionListComponent implements OnInit {
   
   ngOnInit(): void {
     let userId = this.authService.currentUser()?.userId ?? '';
-    this.transactionService.getUserTransactions(userId).subscribe({
+    this.authService.getUserTransactions(userId).subscribe({
       next: (response) => {
         console.log('response: ', response);
       },

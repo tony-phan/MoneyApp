@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AccountService } from '../services/account.service';
-import { RegisterComponent } from "../auth/register/register.component";
-import { MaterialModule } from '../material.module';
+import { AccountService } from '../../services/account.service';
+import { RegisterComponent } from "../register/register.component";
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-home',
@@ -32,4 +32,9 @@ export class HomeComponent implements OnInit {
   cancelRegisterMode(event: boolean) {
     this.registerMode = event;
   }
+
+  isLoggedIn(): boolean {
+    return !!this.authService.currentUser(); // assuming currentUser is a signal
+  }
+
 }
