@@ -35,6 +35,7 @@ public static class IdentityServiceExtensions
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
+                NameClaimType = "sub",
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,

@@ -23,20 +23,19 @@ public class TransactionController : BaseApiController
     [HttpPost("create")]
     public async Task<ActionResult<TransactionDto>> CreateTransaction(TransactionCreateDto transactionCreateDto)
     {
-        var transaction = await _transactionService.Create(transactionCreateDto);
-        return Ok(transaction);
+        var result = await _transactionService.Create(transactionCreateDto);
+        return Ok(result);
     }
 
     [Authorize]
     [HttpGet("{transactionHistoryId}")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsByHistoryId(int transactionHistoryId)
     {
-        var transactions = await _transactionService.GetByTransactionHistoryId(transactionHistoryId);
-        if (transactions == null || transactions.Count() == 0)
-        {
+        var result = await _transactionService.GetByTransactionHistoryId(transactionHistoryId);
+        if (result == null || result.Count() == 0)
             return NotFound(new { message = "No transactions found" });
-        }
-        return Ok(transactions);
+
+        return Ok(result);
     }
 
     [Authorize]
@@ -45,16 +44,19 @@ public class TransactionController : BaseApiController
     {
         var result = await _transactionService.Delete(id);
         if (!result)
-        {
             return NotFound($"Delete transaction with id {id} failed.");
-        }
+
         return NoContent();
     }
 
-    // [Authorize]
-    // [HttpPut("{id}")]
-    // public async Task<ActionResult<TransactionDto>> UpdateTransaction(int id, TransactionUpdateDto transactionUpdateDto)
-    // {
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<TransactionDto>> UpdateTransaction(int id, TransactionUpdateDto transactionUpdateDto)
+    {
+        if (id <= 0)
+            return BadRequest(new { message = "Invalid ID" });
 
-    // }
+        var result = await _transactionService.Update(id, transactionUpdateDto);
+        return Ok(result);
+    }
 }

@@ -32,7 +32,7 @@ public static class ExceptionMiddlewareExtensions
                         errors = accountEx.Errors
                     });
                 }
-                else if (exception is TransactionDateMismtachException)
+                else if (exception is TransactionDateMismtachException || exception is TransactionOwnershipException)
                 {
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     await context.Response.WriteAsJsonAsync(new { message = exception.Message });

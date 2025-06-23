@@ -44,9 +44,7 @@ public class TransactionHistoryController : BaseApiController
     public async Task<ActionResult<TransactionHistoryDto>> GetTransactionHistoryById(int id)
     {
         if (id <= 0)
-        {
             return BadRequest(new { message = "ID must be a positive number" });
-        }
 
         var transactionHistory = await _transactionHistoryService.GetById(id);
         return Ok(transactionHistory);
@@ -67,9 +65,8 @@ public class TransactionHistoryController : BaseApiController
     {
         var deleted = await _transactionHistoryService.Delete(id);
         if (!deleted)
-        {
             return NotFound($"TransactionHistory with id {id} not found.");
-        }
+
         return NoContent();
     }
 }
