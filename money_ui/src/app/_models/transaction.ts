@@ -1,8 +1,9 @@
 export interface Transaction {
-    id: string,
+    id: number,
+    amount: number,
     transactionType: string,
-    incomeCategory: string,
-    expenseCategory: string,
+    incomeCategory?: string | null,
+    expenseCategory?: string | null,
     description: string,
     date: string
 }

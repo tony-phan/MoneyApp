@@ -3,9 +3,9 @@
     <span class="spacer"></span>
     
     @if (accountService.currentUser()) {
-        <button mat-button routerLink="/">Home</button>
-        <button mat-button routerLink="/dashboard">Dashboard</button>
-        <button mat-button routerLink="/transactions">Transactions</button>
+        <button mat-button routerLink="/" routerLinkActive="active">Home</button>
+        <button mat-button routerLink="/dashboard" routerLinkActive="active">Dashboard</button>
+        <button mat-button routerLink="/transactions" routerLinkActive="active">Transactions</button>
         <button mat-button (click)="onLogout()">Logout</button>
     }
 

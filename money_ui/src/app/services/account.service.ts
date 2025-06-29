@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable, model, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { Transaction } from '../_models/transaction';
@@ -9,7 +9,7 @@ import { Transaction } from '../_models/transaction';
 })
 export class AccountService {
   private http = inject(HttpClient);
-  baseUrl = 'https://localhost:7000/api/Account';
+  private baseUrl = 'https://localhost:7000/api/Account';
   currentUser = signal<User | null>(null);
 
   constructor() { }
@@ -21,6 +21,7 @@ export class AccountService {
           this.currentUser.set(user);
           localStorage.setItem('user', JSON.stringify(user))
         }
+        return user;
       })
     );
   }
@@ -34,8 +35,7 @@ export class AccountService {
     return this.http.post<User>(this.baseUrl + '/register', payload).pipe(
       map(user => {
         if (user) {
-          this.currentUser.set(user);
-          localStorage.setItem('user', JSON.stringify(user))
+          console.log('successfully registered user: ', user);
         }
         return user;
       })

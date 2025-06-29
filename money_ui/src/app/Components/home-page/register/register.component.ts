@@ -1,7 +1,7 @@
 import { Component, inject, output } from '@angular/core';
-import { AccountService } from '../../services/account.service';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../material.module';
+import { MaterialModule } from '../../../material.module';
+import { AccountService } from '../../../services/account.service';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +19,7 @@ export class RegisterComponent {
   register() {
     this.accountService.register(this.model).subscribe({
       next: response => {
-        console.log(response);
+        this.model = {};
         this.cancel();
       },
       error: error => console.log(error)

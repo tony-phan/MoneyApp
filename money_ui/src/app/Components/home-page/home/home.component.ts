@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AccountService } from '../../services/account.service';
 import { RegisterComponent } from "../register/register.component";
-import { MaterialModule } from '../../material.module';
+import { AccountService } from '../../../services/account.service';
+import { MaterialModule } from '../../../material.module';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +11,7 @@ import { MaterialModule } from '../../material.module';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  authService = inject(AccountService);
+  private accountService = inject(AccountService);
   registerMode = false;
 
   ngOnInit(): void {
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
     const userString = localStorage.getItem('user');
     if(!userString) return;
     const user = JSON.parse(userString);
-    this.authService.currentUser.set(user);
+    this.accountService.currentUser.set(user);
   }
 
   cancelRegisterMode(event: boolean) {
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   }
 
   isLoggedIn(): boolean {
-    return !!this.authService.currentUser(); // assuming currentUser is a signal
+    return !!this.accountService.currentUser(); // call it like a function if it's a signal
   }
 
 }

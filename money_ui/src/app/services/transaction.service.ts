@@ -1,8 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { User } from '../_models/user';
-import { Observable } from 'rxjs';
-import { Transaction } from '../_models/transaction';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -10,8 +7,8 @@ import { AccountService } from './account.service';
 })
 export class TransactionService {
   private http = inject(HttpClient);
-  private authService = inject(AccountService)
-  baseUrl = 'https://localhost:7000/api/Transaction';
+  private accountService = inject(AccountService)
+  private baseUrl = 'https://localhost:7000/api/Transaction';
 
   constructor() { }
 

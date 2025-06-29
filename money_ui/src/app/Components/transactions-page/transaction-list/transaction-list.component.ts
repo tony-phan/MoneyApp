@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { TransactionService } from '../../services/transaction.service';
-import { AccountService } from '../../services/account.service';
+import { AccountService } from '../../../services/account.service';
+import { TransactionService } from '../../../services/transaction.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -11,23 +11,15 @@ import { AccountService } from '../../services/account.service';
 })
 export class TransactionListComponent implements OnInit {
   transactionService = inject(TransactionService);
-  authService = inject(AccountService);
+  private accountService = inject(AccountService);
   
   ngOnInit(): void {
-    let userId = this.authService.currentUser()?.userId ?? '';
-    this.authService.getUserTransactions(userId).subscribe({
+    let userId = this.accountService.currentUser()?.userId ?? '';
+    this.accountService.getUserTransactions(userId).subscribe({
       next: (response) => {
         console.log('response: ', response);
       },
       error: (error) => console.log('error: ', error)
     });
-    this.setCurrentUser();
-  }
-
-  setCurrentUser() {
-    const userString = localStorage.getItem('user');
-    if(!userString) return;
-    const user = JSON.parse(userString);
-    this.authService.currentUser.set(user);
   }
 }
