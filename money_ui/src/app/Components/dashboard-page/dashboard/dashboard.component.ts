@@ -6,11 +6,13 @@ import { TransactionHistoryService } from '../../../services/transaction-history
 import { TransactionService } from '../../../services/transaction.service';
 import { Transaction } from '../../../_models/transaction';
 import { TransactionHistory } from '../../../_models/transaction-history';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MaterialModule } from '../../../material.module';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatDialogModule],
+  imports: [MatDialogModule, MatExpansionModule, MaterialModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -24,20 +26,18 @@ export class DashboardComponent implements OnInit {
   selectedHistory: TransactionHistory | null = null;
 
   ngOnInit(): void {
-    
-  }
-
-
-  openTransactionForm(transaction?: Transaction) {
-    const dialogRef = this.dialog.open(TransactionFormComponent, {
-      width: '400px',
-      data: transaction || null
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result) {
-        console.log('test');
+    var userId = this.accountService.currentUser()?.userId ?? '';
+    this.accountService.getTransactionHistories(userId).subscribe({
+      next: response => {
+        this.transactionHistories = response;
+      },
+      error: error => {
+        console.log('error: ', error);
       }
     });
+  }
+
+  addHistory() {
+    console.log('transactionHistories: ', this.transactionHistories);
   }
 }

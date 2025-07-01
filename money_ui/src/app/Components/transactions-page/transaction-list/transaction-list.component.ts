@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AccountService } from '../../../services/account.service';
 import { TransactionService } from '../../../services/transaction.service';
+import { MaterialModule } from '../../../material.module';
 
 @Component({
   selector: 'app-transaction-list',
   standalone: true,
-  imports: [],
+  imports: [MaterialModule],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.css'
 })

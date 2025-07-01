@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   }
 
   isLoggedIn(): boolean {
-    return !!this.accountService.currentUser(); // call it like a function if it's a signal
+    return this.accountService.currentUser() != null; // call it like a function if it's a signal
   }
 
 }

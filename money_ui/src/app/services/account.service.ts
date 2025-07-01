@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { Transaction } from '../_models/transaction';
+import { TransactionHistory } from '../_models/transaction-history';
 
 @Injectable({
   providedIn: 'root'
@@ -48,5 +49,14 @@ export class AccountService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.get<Transaction[]>(this.baseUrl + `/${userId}/transactions`, { headers });
+  }
+
+  getTransactionHistories(userId: string): Observable<TransactionHistory[]> {
+    const token = this.currentUser()?.token;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<TransactionHistory[]>(this.baseUrl + `/${userId}/transactionHistories`, { headers });
   }
 }
