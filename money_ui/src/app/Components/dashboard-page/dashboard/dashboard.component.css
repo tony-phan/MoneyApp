@@ -1,3 +1,26 @@
-.dashboard {
-    text-align: center;
+.dashboard-wrapper {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.summary-card {
+  max-width: 400px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-body {
+  padding: 12px 0;
+}
+
+.panel-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
 }

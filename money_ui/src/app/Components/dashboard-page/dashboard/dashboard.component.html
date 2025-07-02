@@ -1,6 +1,55 @@
-<div class="dashboard p-4">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Transaction Histories</h2>
-        <button mat-flat-button color="primary" (click)="addHistory()">Add History</button>
+<div class="dashboard-container">
+    <!-- Page Title -->
+    <h2 mat-headline>Dashboard</h2>
+
+   <!-- Summary Card -->
+    <mat-card class="summary-card">
+        <mat-card-title>Account Summary</mat-card-title>
+        <mat-card-content>
+            <!-- Replace these with dynamic values later -->
+            <p>Total Income: $0.00</p>
+            <p>Total Expenses: $0.00</p>
+            <p>Net Balance: $0.00</p>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Section Header + Add Button -->
+    <div class="section-header">
+        <span mat-subheading-1>Transaction Histories</span>
+        <button mat-raised-button color="primary" (click)="openCreateModal()">
+            <mat-icon>add</mat-icon>
+            Add Transaction History
+        </button>
     </div>
+
+    @if(transactionHistories.length == 0) {
+        <p>No transaction histories found.</p>
+    } @else {
+        <mat-accordion>
+            @for (tH of transactionHistories; track tH.id) {
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ tH.month }} {{ tH.year }}
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            ${{ tH.netBalance }} Balance
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div class="panel-body">
+                        <p>Income: ${{ tH.totalIncome }}</p>
+                        <p>Expenses: ${{ tH.totalExpenses }}</p>
+                    </div>
+
+                    <div class="panel-actions">
+                        <button mat-stroked-button color="primary" (click)="deleteHistory()">
+                            <mat-icon>delete</mat-icon>
+                            Delete
+                        </button>
+                    </div>
+                </mat-expansion-panel>
+            }
+        </mat-accordion>
+    }
 </div>
