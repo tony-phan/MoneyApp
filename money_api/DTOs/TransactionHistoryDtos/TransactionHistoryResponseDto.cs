@@ -3,10 +3,10 @@ using money_api.DTOs.TransactionDtos;
 
 namespace money_api.DTOs.TransactionHistoryDtos;
 
-public class TransactionHistoryDto
+// this DTO exlcudes the userId field
+public class TransactionHistoryResponseDto
 {
     public int Id { get; set; }
-    public required string UserId { get; set; }
     [Range(1, 12)]
     public int Month { get; set; }
     public int Year { get; set; }

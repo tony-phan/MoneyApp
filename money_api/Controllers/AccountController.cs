@@ -51,10 +51,10 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<AccountDto>> Login(AccountLoginDto loginDto)
     {
         var user = await _accountService.GetByUsername(loginDto.UserName);
-        if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
-        {
+        if (user == null)
+            return BadRequest("Username not found");
+        else if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
             return BadRequest("Invalid user credentials");
-        }
 
         var token = _tokenService.CreateToken(user);
 
@@ -84,7 +84,7 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpGet("{userId}/transactionHistories")]
-    public async Task<ActionResult<IEnumerable<TransactionHistoryDto>>> GetTransactionHistoriesByUserId(string userId)
+    public async Task<ActionResult<IEnumerable<TransactionHistoryResponseDto>>> GetTransactionHistoriesByUserId(string userId)
     {
         string regexPattern = "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$";
         if (!Regex.IsMatch(userId, regexPattern, RegexOptions.IgnoreCase))
@@ -93,7 +93,7 @@ public class AccountController : BaseApiController
         }
 
         var transactionHistories = await _transactionHistoryService.GetByUserId(userId);
-        if (transactionHistories == null || transactionHistories.Count() == 0)
+        if (transactionHistories == null)
         {
             return NotFound(new { message = $"No transaction histories found for user ID '{userId}'" });
         }

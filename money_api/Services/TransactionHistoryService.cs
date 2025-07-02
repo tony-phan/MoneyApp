@@ -18,7 +18,7 @@ public interface ITransactionHistoryService
 {
     Task<TransactionHistoryDto> Create(TransactionHistoryCreateDto transactionHistoryCreateDto);
     Task<TransactionHistoryDto> GetById(int id);
-    Task<IEnumerable<TransactionHistoryDto>> GetByUserId(string userId);
+    Task<IEnumerable<TransactionHistoryResponseDto>> GetByUserId(string userId);
     Task<IEnumerable<TransactionHistoryDto>> GetAll();
     Task<bool> Delete(int id);
 }
@@ -99,9 +99,9 @@ public class TransactionHistoryService : ITransactionHistoryService
         return _mapper.Map<TransactionHistoryDto>(tH);
     }
 
-    public async Task<IEnumerable<TransactionHistoryDto>> GetByUserId(string userId)
+    public async Task<IEnumerable<TransactionHistoryResponseDto>> GetByUserId(string userId)
     {
         var transactionHistories = await _transactionHistoryRepository.GetAllByUserId(userId);
-        return transactionHistories.Select(tH => _mapper.Map<TransactionHistoryDto>(tH));
+        return transactionHistories.Select(tH => _mapper.Map<TransactionHistoryResponseDto>(tH));
     }
 }

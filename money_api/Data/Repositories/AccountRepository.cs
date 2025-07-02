@@ -41,7 +41,10 @@ public class AccountRepository : IAccountRepository
 
     public async Task<IEnumerable<AppUser>> GetAll()
     {
-        return await _userManager.Users.Include(u => u.TransactionHistories).ToListAsync();
+        return await _userManager.Users
+            .Include(u => u.TransactionHistories)
+            .ThenInclude(tH => tH.Transactions)
+            .ToListAsync();
     }
 
     public async Task<AppUser?> GetById(string id)

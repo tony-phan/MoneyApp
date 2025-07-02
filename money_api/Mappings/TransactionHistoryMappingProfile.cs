@@ -15,5 +15,8 @@ public class TransactionHistoryMappingProfile : Profile
         // Mapping for TransactionHistory to TransactionHistoryDto
         CreateMap<TransactionHistory, TransactionHistoryDto>()
             .ForMember(dest => dest.Transactions, opt => opt.MapFrom(src => src.Transactions));
+
+        CreateMap<TransactionHistory, TransactionHistoryResponseDto>()
+            .ForMember(dest => dest.Transactions, opt => opt.MapFrom(src => src.Transactions));
     }
 }

@@ -255,7 +255,7 @@ namespace money_api.Migrations
 
                     b.HasIndex("TransactionHistoryId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("money_api.Models.TransactionHistory", b =>
@@ -287,7 +287,7 @@ namespace money_api.Migrations
                     b.HasIndex("UserId", "Month", "Year")
                         .IsUnique();
 
-                    b.ToTable("TransactionHistories");
+                    b.ToTable("TransactionHistories", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace money_api.Models;
+
 public class AppUser : IdentityUser
 {
     // Navigation Property
-    public ICollection<TransactionHistory>? TransactionHistories { get; set; }
+    public ICollection<TransactionHistory> TransactionHistories { get; set; } = new List<TransactionHistory>();
 
     public override string ToString()
     {
