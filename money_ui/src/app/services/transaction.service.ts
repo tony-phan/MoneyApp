@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account.service';
 
@@ -6,10 +6,15 @@ import { AccountService } from './account.service';
   providedIn: 'root'
 })
 export class TransactionService {
-  private http = inject(HttpClient);
-  private accountService = inject(AccountService)
   private baseUrl = 'https://localhost:7000/api/Transaction';
 
-  constructor() { }
+  constructor(private http: HttpClient, 
+              private accountService: AccountService) { }
 
+  getAuthHeaders(): HttpHeaders {
+    const token = this.accountService.currentUser()?.token;
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 }

@@ -1,26 +1,62 @@
-.dashboard-wrapper {
+.dashboard-container {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.summary-card {
-  max-width: 400px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
-.panel-body {
-  padding: 12px 0;
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
 }
 
-.panel-actions {
-  margin-top: 12px;
+.history-card {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.summary-section {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.summary-card {
+  flex: 1 1 200px;
+  text-align: center;
+  padding: 16px;
+  color: white;
+}
+
+.income {
+  background-color: #4caf50;
+}
+
+.expenses {
+  background-color: #f44336;
+}
+
+.balance {
+  background-color: #2196f3;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+::ng-deep .mat-paginator {
+  margin-top: 24px;
+  justify-content: center;
 }

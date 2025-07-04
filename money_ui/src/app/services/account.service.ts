@@ -9,11 +9,17 @@ import { TransactionHistory } from '../_models/transaction-history';
   providedIn: 'root'
 })
 export class AccountService {
-  private http = inject(HttpClient);
   private baseUrl = 'https://localhost:7000/api/Account';
   currentUser = signal<User | null>(null);
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = this.currentUser()?.token;
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
   login(payload: any) {
     return this.http.post<User>(this.baseUrl + '/login', payload).pipe(
@@ -44,19 +50,10 @@ export class AccountService {
   }
 
   getUserTransactions(userId: string): Observable<Transaction[]> {
-    const token = this.currentUser()?.token;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<Transaction[]>(this.baseUrl + `/${userId}/transactions`, { headers });
+    return this.http.get<Transaction[]>(this.baseUrl + `/${userId}/transactions`, { headers: this.getAuthHeaders() });
   }
 
   getTransactionHistories(userId: string): Observable<TransactionHistory[]> {
-    const token = this.currentUser()?.token;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.get<TransactionHistory[]>(this.baseUrl + `/${userId}/transactionHistories`, { headers });
+    return this.http.get<TransactionHistory[]>(this.baseUrl + `/${userId}/transactionHistories`, { headers: this.getAuthHeaders() });
   }
 }
