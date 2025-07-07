@@ -18,18 +18,20 @@ public class TransactionHistoryServiceTests
     private readonly Mock<IAccountRepository> _accountRepoMock;
     private readonly IMapper _mapper;
     private readonly TransactionHistoryService _service;
+    private readonly Mock<ApplicationDbContext> _dbContextMock;
 
     public TransactionHistoryServiceTests()
     {
         _transactionHistoryRepoMock = new Mock<ITransactionHistoryRepository>();
         _transactionRepoMock = new Mock<ITransactionRepository>();
+        _accountRepoMock = new Mock<IAccountRepository>();
+        _dbContextMock = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
+
         var config = new MapperConfiguration(cfg => cfg.AddProfile<TransactionHistoryMappingProfile>());
         _mapper = config.CreateMapper();
 
-        _accountRepoMock = new Mock<IAccountRepository>();
-
         _service = new TransactionHistoryService(
-            new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>()).Object,
+            _dbContextMock.Object,
             _accountRepoMock.Object,
             _transactionHistoryRepoMock.Object,
             _transactionRepoMock.Object,
@@ -38,7 +40,7 @@ public class TransactionHistoryServiceTests
     }
 
     [Fact]
-    public async Task GetTransactionHistoryById_ValidId_ReturnsDto()
+    public async Task GetById_ValidId_ReturnsDto()
     {
         var fakeAppUser = new AppUser
         {
@@ -88,7 +90,7 @@ public class TransactionHistoryServiceTests
     }
 
     [Fact]
-    public async Task GetTransactionHistoryById_InvalidId_ReturnsException()
+    public async Task GetById_InvalidId_ReturnsException()
     {
         int invalidId = -10;
         _transactionHistoryRepoMock
@@ -99,7 +101,7 @@ public class TransactionHistoryServiceTests
     }
 
     [Fact]
-    public async Task GetTransactionHistoryByUserId_ValidUserId_ReturnsDtos()
+    public async Task GetByUserId_ValidUserId_ReturnsDtos()
     {
         var appUser1 = new AppUser
         {
@@ -216,5 +218,62 @@ public class TransactionHistoryServiceTests
             Assert.Equal(expectedResult2[i].TotalExpenses, result2[i].TotalExpenses);
             Assert.Equal(expectedResult2[i].NetBalance, result2[i].NetBalance);
         }
+    }
+
+    [Fact]
+    public async Task DeleteTransactionHistory_WithValidIdAndNoTransactions_ReturnsTrue()
+    {
+        int id = 15;
+
+        var appUser = new AppUser
+        {
+            UserName = "joe_slow",
+            Email = "joe_slow@yahoo.com",
+            Id = "a08ddd8f-6a9c-4498-a31b-6e3b27fb84ed"
+        };
+
+        var transactionHistory = new TransactionHistory
+        {
+            Id = 15,
+            UserId = appUser.Id,
+            Month = 5,
+            Year = 2025,
+            TotalIncome = 1000,
+            TotalExpenses = 300,
+            User = appUser,
+        };
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.GetById(id))
+            .ReturnsAsync(transactionHistory);
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.Delete(transactionHistory))
+            .Verifiable();
+
+        _dbContextMock
+            .Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+
+
+        var result = await _service.Delete(id);
+
+        Assert.True(result);
+        _transactionHistoryRepoMock.Verify(r => r.Delete(It.IsAny<TransactionHistory>()), Times.Once);
+        _dbContextMock.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteTransactionHistory_InvalidId_ReturnsException()
+    {
+        int invalidId = -10;
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.GetById(invalidId))
+            .ReturnsAsync((TransactionHistory?)null);
+
+        await Assert.ThrowsAsync<TransactionHistoryNotFoundException>(() => _service.Delete(invalidId));
+        _transactionRepoMock.Verify(r => r.DeleteRange(It.IsAny<IEnumerable<Transaction>>()), Times.Never);
+        _transactionHistoryRepoMock.Verify(r => r.Delete(It.IsAny<TransactionHistory>()), Times.Never);
+        _dbContextMock.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

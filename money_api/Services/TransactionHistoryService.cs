@@ -72,7 +72,7 @@ public class TransactionHistoryService : ITransactionHistoryService
         if (th == null)
             throw new TransactionHistoryNotFoundException(id);
 
-        if (th.Transactions != null && th.Transactions.Any())
+        if (th.Transactions.Any())
         {
             _transactionRepository.DeleteRange(th.Transactions);
         }
@@ -80,7 +80,6 @@ public class TransactionHistoryService : ITransactionHistoryService
         _transactionHistoryRepository.Delete(th);
         var changes = await _dbContext.SaveChangesAsync();
         return changes > 0;
-
     }
 
     public async Task<IEnumerable<TransactionHistoryDto>> GetAll()
