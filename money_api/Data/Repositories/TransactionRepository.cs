@@ -17,7 +17,7 @@ public interface ITransactionRepository
     Task<Transaction?> Update(Transaction transaction);
     void Delete(Transaction transaction);
     Task<IEnumerable<Transaction>> GetAllByUserId(string userId);
-    void DeleteRange(ICollection<Transaction> transactions);
+    void DeleteRange(IEnumerable<Transaction> transactions);
 }
 
 public class TransactionRepository : ITransactionRepository
@@ -40,7 +40,7 @@ public class TransactionRepository : ITransactionRepository
         _dbContext.Transactions.Remove(transaction);
     }
 
-    public void DeleteRange(ICollection<Transaction> transactions)
+    public void DeleteRange(IEnumerable<Transaction> transactions)
     {
         _dbContext.Transactions.RemoveRange(transactions);
     }

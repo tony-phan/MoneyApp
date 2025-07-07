@@ -13,5 +13,5 @@ public class TransactionHistoryResponseDto
     public decimal TotalIncome { get; set; }
     public decimal TotalExpenses { get; set; }
     public decimal NetBalance => TotalIncome - TotalExpenses;
-    public ICollection<TransactionDto> Transactions { get; set; } = new List<TransactionDto>();
+    public IEnumerable<TransactionDto> Transactions { get; set; } = new List<TransactionDto>();
 }

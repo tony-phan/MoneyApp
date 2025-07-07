@@ -17,5 +17,5 @@ public class TransactionHistory
 
     // Navigation Properties
     public required AppUser User { get; set; }
-    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+    public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

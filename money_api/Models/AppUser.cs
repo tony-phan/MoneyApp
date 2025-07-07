@@ -9,7 +9,7 @@ namespace money_api.Models;
 public class AppUser : IdentityUser
 {
     // Navigation Property
-    public ICollection<TransactionHistory> TransactionHistories { get; set; } = new List<TransactionHistory>();
+    public IEnumerable<TransactionHistory> TransactionHistories { get; set; } = new List<TransactionHistory>();
 
     public override string ToString()
     {
