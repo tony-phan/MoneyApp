@@ -19,6 +19,14 @@
       </mat-card>
     </section>
 
+    <div class="button-row">
+      <button mat-flat-button color="primary" (click)="openCreateTransactionHistoryModal()">
+        Create Transaction History
+      </button>
+    </div>
+
+    <mat-divider class="my-4"></mat-divider>
+
     @if (transactionHistories().length === 0) {
       <p>No transaction histories found.</p>
     } @else {

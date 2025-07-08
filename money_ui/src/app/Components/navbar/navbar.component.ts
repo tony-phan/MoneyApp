@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AccountService } from '../../services/account.service';
 import { MaterialModule } from '../../material.module';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, MaterialModule, RouterLinkActive],
+  imports: [RouterLink, MaterialModule, RouterLinkActive, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

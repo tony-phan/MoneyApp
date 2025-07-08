@@ -7,6 +7,7 @@ import { TransactionHistory } from '../../../_models/transaction-history';
 import { MaterialModule } from '../../../material.module';
 import { TransactionHistoryModalComponent } from '../transaction-history-modal/transaction-history-modal.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { CreateTransactionHistoryModalComponent } from '../create-transaction-history-modal/create-transaction-history-modal.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,27 +17,15 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  // Signals for UI state
   readonly transactionHistories = signal<TransactionHistory[]>([]);
   readonly loading = signal<boolean>(true);
   readonly pagination = signal({ pageIndex: 0, pageSize: 8 });
 
-  monthMapping = new Map<number, string>([
-    [1, "January"],
-    [2, "February"],
-    [3, "March"],
-    [4, "April"],
-    [5, "May"],
-    [6, "June"],
-    [7, "July"],
-    [8, "August"],
-    [9, "September"],
-    [10, "October"],
-    [11, "November"],
-    [12, "December"],
+  monthMapping = new Map<number, string>([ 
+    [1, "January"], [2, "February"], [3, "March"], [4, "April"], [5, "May"], [6, "June"], 
+    [7, "July"], [8, "August"], [9, "September"], [10, "October"], [11, "November"], [12, "December"]
   ]);
 
-  // MatPaginator reference
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // Derived signals
@@ -58,21 +47,17 @@ export class DashboardComponent implements OnInit {
     private accountService: AccountService,
     private transactionService: TransactionService,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.transactionHistories();
+    // Reset pagination to first page
+    this.pagination.set({
+      pageIndex: 0,
+      pageSize: this.pagination().pageSize,
+    });
+  }
 
   ngOnInit(): void {
     this.fetchTransactionHistories();
-  }
-
-  ngAfterViewInit(): void {
-    effect(() => {
-      // Reset to first page when data changes
-      this.transactionHistories();
-      this.pagination.set({
-        pageIndex: 0,
-        pageSize: this.pagination().pageSize,
-      });
-    });
   }
 
   onPageChange(event: PageEvent): void {
@@ -101,8 +86,8 @@ export class DashboardComponent implements OnInit {
   deleteHistory(id: number): void {
     this.transactionHistoryService.delete(id).subscribe({
       next: () =>
-        this.transactionHistories.update((list) =>
-          list.filter((h) => h.id !== id)
+        this.transactionHistories.update((tH) =>
+          tH.filter((h) => h.id !== id)
         ),
       error: (error) => console.error('Failed to delete history:', error),
     });
@@ -112,6 +97,32 @@ export class DashboardComponent implements OnInit {
     this.dialog.open(TransactionHistoryModalComponent, {
       width: '600px',
       data: history.transactions,
+    });
+  }
+
+  openCreateTransactionHistoryModal(): void {
+    const dialogRef = this.dialog.open(CreateTransactionHistoryModalComponent, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((formData) => {
+      if(!formData) return;
+
+      const userId = this.accountService.currentUser()?.userId;
+      if(!userId) return;
+
+      const payload = {
+        userId: userId,
+        month: formData.month,
+        year: formData.year
+      };
+
+      this.transactionHistoryService.create(payload).subscribe({
+        next: (created) => {
+          this.transactionHistories.update((tH) => [...tH, created]);
+        },
+        error: (error) => console.log('Failed to create transaction history: ', error)
+      });
     });
   }
 }

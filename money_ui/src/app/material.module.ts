@@ -19,7 +19,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     FormsModule
   ],
   exports: [
-    FormsModule,
     MatToolbarModule,
     MatButtonModule,
     MatFormFieldModule,

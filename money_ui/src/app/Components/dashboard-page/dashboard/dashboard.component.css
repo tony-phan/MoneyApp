@@ -17,6 +17,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: rgb(195, 216, 218);
 }
 
 .summary-section {
@@ -60,3 +61,12 @@
   margin-top: 24px;
   justify-content: center;
 }
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;        
+  max-width: 1200px;
+  margin: 1rem 0;
+}
+

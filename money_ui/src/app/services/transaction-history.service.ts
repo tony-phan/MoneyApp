@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { AccountService } from './account.service';
 import { TransactionService } from './transaction.service';
 import { Observable } from 'rxjs';
+import { TransactionHistory } from '../_models/transaction-history';
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +24,9 @@ export class TransactionHistoryService {
 
   delete(id: number): Observable<boolean> {
     return this.http.delete<boolean>(this.baseUrl + `/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  create(payload: any): Observable<TransactionHistory> {
+    return this.http.post<TransactionHistory>(this.baseUrl + '/create', payload, { headers: this.getAuthHeaders() });
   }
 }
