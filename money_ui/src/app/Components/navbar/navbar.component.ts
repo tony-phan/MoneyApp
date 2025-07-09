@@ -21,7 +21,6 @@ export class NavbarComponent {
     let payload = { username: this.username, password: this.password };
     this.accountService.login(payload).subscribe({
       next: response => { 
-        console.log('response: ', response);
         this.username = '';
         this.password = '';
         this.router.navigate(['/']);

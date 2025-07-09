@@ -12,7 +12,9 @@ export class AccountService {
   private baseUrl = 'https://localhost:7000/api/Account';
   currentUser = signal<User | null>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) {}
 
   getAuthHeaders(): HttpHeaders {
     const token = this.currentUser()?.token;

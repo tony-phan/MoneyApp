@@ -5,5 +5,5 @@ export interface Transaction {
     incomeCategory?: string | null,
     expenseCategory?: string | null,
     description: string,
-    date: string
+    date: Date
 }

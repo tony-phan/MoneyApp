@@ -8,8 +8,10 @@ import { AccountService } from './account.service';
 export class TransactionService {
   private baseUrl = 'https://localhost:7000/api/Transaction';
 
-  constructor(private http: HttpClient, 
-              private accountService: AccountService) { }
+  constructor(
+    private http: HttpClient, 
+    private accountService: AccountService
+  ) {}
 
   getAuthHeaders(): HttpHeaders {
     const token = this.accountService.currentUser()?.token;

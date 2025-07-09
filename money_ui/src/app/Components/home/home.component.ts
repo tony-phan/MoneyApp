@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RegisterComponent } from "../register/register.component";
-import { AccountService } from '../../../services/account.service';
-import { MaterialModule } from '../../../material.module';
+import { AccountService } from '../../services/account.service';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-home',

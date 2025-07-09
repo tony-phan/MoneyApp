@@ -11,9 +11,11 @@ import { TransactionHistory } from '../_models/transaction-history';
 export class TransactionHistoryService {
   private baseUrl = 'https://localhost:7000/api/TransactionHistory';
 
-  constructor(private http: HttpClient, 
-              private accountService: AccountService, 
-              private transactionService: TransactionService) { }
+  constructor(
+    private http: HttpClient, 
+    private accountService: AccountService, 
+    private transactionService: TransactionService
+  ) {}
 
   getAuthHeaders(): HttpHeaders {
     const token = this.accountService.currentUser()?.token;
