@@ -56,8 +56,7 @@ public class TransactionHistoryService : ITransactionHistoryService
             Year = transactionHistoryCreateDto.Year,
             TotalIncome = 0,
             TotalExpenses = 0,
-            User = user,
-            Transactions = new List<Transaction>()
+            User = user
         };
 
         var tH = await _transactionHistoryRepository.Create(transactionHistoryEntity);

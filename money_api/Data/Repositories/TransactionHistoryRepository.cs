@@ -13,6 +13,7 @@ public interface ITransactionHistoryRepository
     Task<TransactionHistory> Create(TransactionHistory newTransactionHistory);
     Task<TransactionHistory?> GetById(int id);
     Task<IEnumerable<TransactionHistory>> GetAllByUserId(string userId);
+    Task<TransactionHistory?> GetByUserIdMonthYear(string userId, int month, int year);
     Task<TransactionHistory?> Update(TransactionHistory updatedTransactionHistory);
     void Delete(TransactionHistory transactionHistory);
     Task<IEnumerable<TransactionHistory>> GetAll();
@@ -75,6 +76,13 @@ public class TransactionHistoryRepository : ITransactionHistoryRepository
             .Include(th => th.User)
             .Include(th => th.Transactions)
             .FirstOrDefaultAsync(th => th.Id == id);
+    }
+
+    public async Task<TransactionHistory?> GetByUserIdMonthYear(string userId, int month, int year)
+    {
+        return await _dbContext.TransactionHistories
+            .Where(tH => tH.UserId == userId && tH.Month == month && tH.Year == year)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<TransactionHistory?> Update(TransactionHistory updatedTransactionHistory)

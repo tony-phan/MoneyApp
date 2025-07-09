@@ -5,7 +5,7 @@ namespace money_api.DTOs.TransactionDtos;
 
 public class TransactionCreateDto
 {
-    public int TransactionHistoryId { get; set; }
+    public required string UserId { get; set; }
     public decimal Amount { get; set; }
     public required string TransactionType { get; set; }
     public string? IncomeCategory { get; set; }

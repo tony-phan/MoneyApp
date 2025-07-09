@@ -26,14 +26,16 @@ public interface ITransactionService
 public class TransactionService : ITransactionService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IAccountRepository _accountRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly ITransactionHistoryRepository _transactionHistoryRepository;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public TransactionService(ApplicationDbContext dbContext, ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public TransactionService(ApplicationDbContext dbContext, IAccountRepository accountRepository, ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _dbContext = dbContext;
+        _accountRepository = accountRepository;
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
         _mapper = mapper;
@@ -42,12 +44,11 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionDto> Create(TransactionCreateDto transactionCreateDto)
     {
-        var transactionHistory = await _transactionHistoryRepository.GetById(transactionCreateDto.TransactionHistoryId);
-        if (transactionHistory == null)
-            throw new TransactionHistoryNotFoundException(transactionCreateDto.TransactionHistoryId);
+        var user = await _accountRepository.GetById(transactionCreateDto.UserId);
+        if (user == null)
+            throw new AccountNotFoundException("ID", transactionCreateDto.UserId);
 
-        if (transactionCreateDto.Date.Month != transactionHistory.Month || transactionCreateDto.Date.Year != transactionHistory.Year)
-            throw new TransactionDateMismtachException();
+        var transactionHistory = await GetOrCreateTransactionHistory(user, transactionCreateDto.Date.Month, transactionCreateDto.Date.Year);
 
         TransactionType transactionType = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.TransactionType);
         IncomeCategory incomeCategory = string.IsNullOrEmpty(transactionCreateDto.IncomeCategory) ? IncomeCategory.None : (IncomeCategory)Enum.Parse(typeof(IncomeCategory), transactionCreateDto.IncomeCategory);
@@ -143,5 +144,26 @@ public class TransactionService : ITransactionService
         }
         await _dbContext.SaveChangesAsync();
         return _mapper.Map<TransactionDto>(transaction);
+    }
+
+    private async Task<TransactionHistory> GetOrCreateTransactionHistory(AppUser user, int month, int year)
+    {
+        var history = await _transactionHistoryRepository.GetByUserIdMonthYear(user.Id, month, year);
+        if (history != null)
+            return history;
+
+        var newHistory = new TransactionHistory
+        {
+            UserId = user.Id,
+            Month = month,
+            Year = year,
+            TotalIncome = 0,
+            TotalExpenses = 0,
+            User = user
+        };
+
+        var created = await _transactionHistoryRepository.Create(newHistory);
+        await _dbContext.SaveChangesAsync();
+        return created;
     }
 }
