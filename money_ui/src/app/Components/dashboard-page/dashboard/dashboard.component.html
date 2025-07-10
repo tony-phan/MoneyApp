@@ -5,17 +5,17 @@
     <section class="summary-section">
       <mat-card class="summary-card income">
         <h3>Total Income</h3>
-        <p>${{ totalIncome() }}</p>
+        <p>${{ roundToHundredths(totalIncome()) }}</p>
       </mat-card>
 
       <mat-card class="summary-card expenses">
         <h3>Total Expenses</h3>
-        <p>${{ totalExpenses() }}</p>
+        <p>${{ roundToHundredths(totalExpenses()) }}</p>
       </mat-card>
 
       <mat-card class="summary-card balance">
         <h3>Balance</h3>
-        <p>${{ netBalance() }}</p>
+        <p>${{ roundToHundredths(netBalance()) }}</p>
       </mat-card>
     </section>
 

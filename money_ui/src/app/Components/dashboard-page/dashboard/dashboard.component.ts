@@ -17,9 +17,9 @@ import { CreateTransactionHistoryModalComponent } from '../create-transaction-hi
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  readonly transactionHistories = signal<TransactionHistory[]>([]);
-  readonly loading = signal<boolean>(true);
-  readonly pagination = signal({ pageIndex: 0, pageSize: 8 });
+  transactionHistories = signal<TransactionHistory[]>([]);
+  loading = signal<boolean>(true);
+  pagination = signal({ pageIndex: 0, pageSize: 8 });
 
   monthMapping = new Map<number, string>([ 
     [1, "January"], [2, "February"], [3, "March"], [4, "April"], [5, "May"], [6, "June"], 
@@ -29,14 +29,14 @@ export class DashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // Derived signals
-  readonly totalPages = computed(() =>
+  totalPages = computed(() =>
     Math.ceil(this.transactionHistories().length / this.pagination().pageSize)
   );
-  readonly totalIncome = computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.totalIncome, 0));
-  readonly totalExpenses = computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.totalExpenses, 0));
-  readonly netBalance = computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.netBalance, 0));
+  totalIncome = computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.totalIncome, 0));
+  totalExpenses = computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.totalExpenses, 0));
+  netBalance = (computed(() => this.transactionHistories().reduce((sum, tH) => sum += tH.netBalance, 0)));
 
-  readonly paginatedTransactionHistories = computed(() => {
+  paginatedTransactionHistories = computed(() => {
     const { pageIndex, pageSize } = this.pagination();
     const start = pageIndex * pageSize;
     return this.transactionHistories().slice(start, start + pageSize);
@@ -124,5 +124,9 @@ export class DashboardComponent implements OnInit {
         error: (error) => console.log('Failed to create transaction history: ', error)
       });
     });
+  }
+
+  roundToHundredths(value: number): number {
+    return Math.round(value * 100) / 100;
   }
 }
