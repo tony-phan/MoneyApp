@@ -1,3 +1,10 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 mat-table {
   width: 100%;
   overflow-x: auto;
@@ -15,4 +22,11 @@ mat-header-cell, mat-cell {
   &:hover {
     background-color: #f0f0f0;
   }
+}
+
+.paginator-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  width: 100%;
 }
