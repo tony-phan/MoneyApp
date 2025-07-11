@@ -4,21 +4,21 @@ namespace money_api.Models.Enums;
 
 public enum ExpenseCategory
 {
-    [Description("Rent")]
+    [Description("rent")]
     Rent,
-    [Description("Utilities")]
+    [Description("utilities")]
     Utilities,
-    [Description("Groceries")]
+    [Description("groceries")]
     Groceries,
-    [Description("Transportation")]
+    [Description("transportation")]
     Transportation,
-    [Description("Entertainment")]
+    [Description("entertainment")]
     Entertainment,
-    [Description("EatingOut")]
+    [Description("eatingOut")]
     EatingOut,
-    [Description("Insurance")]
+    [Description("insurance")]
     Insurance,
-    [Description("Miscellaneous")]
+    [Description("miscellaneous")]
     Miscellaneous,
     [Description("")]
     None

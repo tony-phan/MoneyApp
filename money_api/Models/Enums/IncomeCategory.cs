@@ -4,12 +4,14 @@ namespace money_api.Models.Enums;
 
 public enum IncomeCategory
 {
-    [Description("Salary")]
+    [Description("salary")]
     Salary,
-    [Description("Bonus")]
+    [Description("bonus")]
     Bonus,
-    [Description("Investments")]
+    [Description("investments")]
     Investments,
+    [Description("miscellaneous")]
+    Miscellaneous,
     [Description("")]
     None
 }

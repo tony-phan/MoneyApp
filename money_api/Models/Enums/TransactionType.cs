@@ -2,8 +2,8 @@ using System.ComponentModel;
 
 public enum TransactionType
 {
-    [Description("Income")]
+    [Description("income")]
     Income,
-    [Description("Expense")]
+    [Description("expense")]
     Expense
 }
