@@ -1,7 +1,54 @@
 <h2 mat-dialog-title>Create Transaction</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
-    <mat-dialog-content>
+    <mat-dialog-content class="form-content">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="Enter amount" />
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Transaction Type</mat-label>
+            <mat-select formControlName="transactionType">
+                @for (type of transactionTypes; track type.value) {
+                    <mat-option [value]="type.value">{{ type.displayName }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        @if(selectedTransactionType() === 'income') {
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Income Category</mat-label>
+                <mat-select formControlName="incomeCategory">
+                    @for (category of incomeCategories; track category.value) {
+                        <mat-option [value]="category.value">{{ category.displayName }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        }
+
+        @if(selectedTransactionType() === 'expense') {
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Expense Category</mat-label>
+                <mat-select formControlName="expenseCategory">
+                    @for (category of expenseCategories; track category.value) {
+                        <mat-option [value]="category.value">{{ category.displayName }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <input matInput type="text" formControlName="description" placeholder="Optional description">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
 
     </mat-dialog-content>
 

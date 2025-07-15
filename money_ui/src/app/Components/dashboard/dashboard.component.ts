@@ -113,8 +113,7 @@ export class DashboardComponent implements OnInit {
 
       const payload = {
         userId: userId,
-        month: formData.month,
-        year: formData.year
+        ...formData
       };
 
       this.transactionHistoryService.create(payload).subscribe({

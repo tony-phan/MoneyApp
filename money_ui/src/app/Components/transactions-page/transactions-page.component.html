@@ -1,15 +1,19 @@
 <div class="transactions-page">
-  <div class="header">
-    <h2>My Transactions</h2>
-    <button mat-flat-button color="primary" (click)="openCreateModal()">Add Transaction</button>
-  </div>
-
-  @if (transactions().length === 0) {
-    <p>No transactions found.</p>
+  @if(loading()) {
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   } @else {
-    <app-transactions-table
-      [transactions]="transactions()"
-      (rowClicked)="onTransactionSelected($event)">
-    </app-transactions-table>
+    <div class="header">
+      <h2>My Transactions</h2>
+      <button mat-flat-button color="primary" (click)="openCreateModal()">Add Transaction</button>
+    </div>
+
+    @if (transactions().length === 0) {
+      <p>No transactions found.</p>
+    } @else {
+      <app-transactions-table
+        [transactions]="transactions()"
+        (rowClicked)="onTransactionSelected($event)">
+      </app-transactions-table>
+    }
   }
 </div>

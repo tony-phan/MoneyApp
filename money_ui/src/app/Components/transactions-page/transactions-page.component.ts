@@ -17,6 +17,7 @@ import { MaterialModule } from '../../material.module';
 })
 export class TransactionsPageComponent implements OnInit {
   transactions = signal<Transaction[]>([]);
+  loading = signal<boolean>(true);
 
   constructor(
     private transactionService: TransactionService, 
@@ -25,10 +26,11 @@ export class TransactionsPageComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    this.loadTransactions();
+    this.fetchTransactions();
   }            
 
-  loadTransactions(): void {
+  fetchTransactions(): void {
+    this.loading.set(true);
     var userId = this.accountService.currentUser()?.userId;
     if(!userId) return;
 
@@ -41,8 +43,12 @@ export class TransactionsPageComponent implements OnInit {
           }
         });
         this.transactions.set(data)
+        this.loading.set(false);
       },
-      error: error => console.log('Error loading transactions: ', error)
+      error: error => {
+        this.loading.set(false);
+        console.log('Error loading transactions: ', error)
+      }
     });
   }
 
@@ -52,8 +58,25 @@ export class TransactionsPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if(!result) return;
+
       if(result === 'refresh') 
-        this.loadTransactions();
+        this.fetchTransactions();
+      
+      const userId = this.accountService.currentUser()?.userId;
+      if(!userId) return;
+
+      const payload = {
+        userId: userId,
+        ...result
+      }
+
+      this.transactionService.create(payload).subscribe({
+        next: (created) => {
+          this.transactions.update((t) => [...t, created])
+        },
+        error: (error) => console.log('Failed to create transaction: ', error)
+      });
     })
   }
 
@@ -64,8 +87,10 @@ export class TransactionsPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if(!result) return;
+
       if(result === 'refresh') 
-        this.loadTransactions();
+        this.fetchTransactions();
     })
   }
 }
