@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { MaterialModule } from '../../../material.module';
+import { MaterialModule } from '../../material.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelect } from "@angular/material/select";
-import { MONTHS } from '../../../constants';
+import { MONTHS } from '../../constants';
 
 @Component({
   selector: 'app-create-transaction-history-modal',

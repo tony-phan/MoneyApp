@@ -1,10 +1,10 @@
 import { Component, computed, effect, OnInit, signal, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AccountService } from '../../../services/account.service';
-import { TransactionHistoryService } from '../../../services/transaction-history.service';
-import { TransactionService } from '../../../services/transaction.service';
-import { TransactionHistory } from '../../../_models/transaction-history';
-import { MaterialModule } from '../../../material.module';
+import { AccountService } from '../../services/account.service';
+import { TransactionHistoryService } from '../../services/transaction-history.service';
+import { TransactionService } from '../../services/transaction.service';
+import { TransactionHistory } from '../../_models/transaction-history';
+import { MaterialModule } from '../../material.module';
 import { TransactionHistoryModalComponent } from '../transaction-history-modal/transaction-history-modal.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CreateTransactionHistoryModalComponent } from '../create-transaction-history-modal/create-transaction-history-modal.component';
