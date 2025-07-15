@@ -50,9 +50,9 @@ public class TransactionService : ITransactionService
 
         var transactionHistory = await GetOrCreateTransactionHistory(user, transactionCreateDto.Date.Month, transactionCreateDto.Date.Year);
 
-        TransactionType transactionType = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.TransactionType);
-        IncomeCategory incomeCategory = string.IsNullOrEmpty(transactionCreateDto.IncomeCategory) ? IncomeCategory.None : (IncomeCategory)Enum.Parse(typeof(IncomeCategory), transactionCreateDto.IncomeCategory);
-        ExpenseCategory expenseCategory = string.IsNullOrEmpty(transactionCreateDto.ExpenseCategory) ? ExpenseCategory.None : (ExpenseCategory)Enum.Parse(typeof(ExpenseCategory), transactionCreateDto.ExpenseCategory);
+        TransactionType transactionType = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.TransactionType, ignoreCase: true);
+        IncomeCategory incomeCategory = string.IsNullOrEmpty(transactionCreateDto.IncomeCategory) ? IncomeCategory.None : (IncomeCategory)Enum.Parse(typeof(IncomeCategory), transactionCreateDto.IncomeCategory, ignoreCase: true);
+        ExpenseCategory expenseCategory = string.IsNullOrEmpty(transactionCreateDto.ExpenseCategory) ? ExpenseCategory.None : (ExpenseCategory)Enum.Parse(typeof(ExpenseCategory), transactionCreateDto.ExpenseCategory, ignoreCase: true);
 
         var transactionEntity = new Transaction
         {
