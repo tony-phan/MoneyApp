@@ -27,7 +27,7 @@ export class TransactionsTableComponent {
     return this.transactions.slice(start, start + pageSize);
   });
 
-  columns: string[] = ['date', 'amount', 'type', 'category', 'description'];
+  columns: string[] = ['id', 'date', 'amount', 'type', 'category', 'description'];
 
   constructor() {
     this.pagination.set({

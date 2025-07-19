@@ -1,8 +1,13 @@
 <div class="table-container">
     <mat-table [dataSource]="paginatedTransactions()" class="mat-elevation-z2">
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+            <mat-cell *matCellDef="let transaction">{{ transaction.id }}</mat-cell>
+        </ng-container>
+        
         <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-            <mat-cell *matCellDef="let transaction">{{ formatDate(transaction.date) }}</mat-cell>
+            <mat-cell *matCellDef="let transaction">{{ transaction.date.toDateString() }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="amount">
