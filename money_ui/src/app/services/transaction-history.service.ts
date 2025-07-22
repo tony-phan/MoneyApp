@@ -4,12 +4,13 @@ import { AccountService } from './account.service';
 import { TransactionService } from './transaction.service';
 import { Observable } from 'rxjs';
 import { TransactionHistory } from '../_models/transaction-history';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionHistoryService {
-  private baseUrl = 'https://localhost:7000/api/TransactionHistory';
+  private baseUrl = environment.apiBaseUrl + '/TransactionHistory';
 
   constructor(
     private http: HttpClient, 

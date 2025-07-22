@@ -4,12 +4,13 @@ import { map, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { Transaction } from '../_models/transaction';
 import { TransactionHistory } from '../_models/transaction-history';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private baseUrl = 'https://localhost:7000/api/Account';
+  private baseUrl = environment.apiBaseUrl + '/Account';
   currentUser = signal<User | null>(null);
 
   constructor(
