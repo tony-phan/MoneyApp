@@ -29,8 +29,14 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
+        // services.AddDbContext<ApplicationDbContext>(options =>
+        //     options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+        // );
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+            options.UseMySql(
+                config.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
+            )
         );
 
         // Register AutoMapper profiles
