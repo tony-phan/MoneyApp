@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using money_api.Data;
 using money_api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 var env = app.Environment.EnvironmentName;
 app.Logger.LogInformation("Running in ASP.NET Core environment: {Environment}", env);
