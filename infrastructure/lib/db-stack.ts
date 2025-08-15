@@ -17,25 +17,14 @@ export class DbStack extends cdk.Stack {
 
     const ec2SecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(
       this,
-      'Ec2SecurityGroup',
-      'sg-0bbb22f82c48ba46b'
+      'ec2SecurityGroup',
+      'sg-0520ec3005dbb1f85',
     );
 
     const rdsSecurityGroup = new ec2.SecurityGroup(this, 'RdsSecurityGroup', {
       vpc,
       description: 'Security group for RDS allowing ECS access',
       allowAllOutbound: true,
-    });
-
-    rdsSecurityGroup.addIngressRule(
-      ec2SecurityGroup, 
-      ec2.Port.tcp(3306), 
-      'Allow EC2 access'
-    );
-
-    new cdk.CfnOutput(this, 'RdsSecurityGroupId', {
-      value: rdsSecurityGroup.securityGroupId,
-      exportName: 'RdsSecurityGroupId'
     });
 
     const dbCredentialsSecret = new rds.DatabaseSecret(this, 'DbCredentialsSecret', {
@@ -55,23 +44,27 @@ export class DbStack extends cdk.Stack {
       allocatedStorage: 20,
       maxAllocatedStorage: 20,
       multiAz: false,
-      securityGroups: [rdsSecurityGroup],
+      securityGroups: [rdsSecurityGroup, ec2SecurityGroup],
       publiclyAccessible: false,
       deletionProtection: false,
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    this.dbInstance = dbInstance;
-    this.dbCredentialsSecret = dbCredentialsSecret;
+    new cdk.CfnOutput(this, 'RdsSecurityGroupId', {
+      value: rdsSecurityGroup.securityGroupId,
+      exportName: 'RdsSecurityGroupId'
+    });
 
     new CfnOutput(this, 'RdsEndpoint', {
       value: dbInstance.dbInstanceEndpointAddress,
       description: 'RDS MySQL endpoint',
+      exportName: 'RdsEndpoint',
     });
 
     new CfnOutput(this, 'RdsSecretArn', {
       value: dbCredentialsSecret.secretArn,
       description: 'Secrets Manager ARN for RDS credentials',
+      exportName: 'RdsSecretArn',
     });
 
     Tags.of(this).add('Project', 'MoneyApp');
