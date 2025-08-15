@@ -3,7 +3,8 @@ import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
-import * as iam from 'aws-cdk-lib/aws-iam'
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export class ApiStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -29,7 +30,15 @@ export class ApiStack extends cdk.Stack {
             ec2.Port.tcp(3306),
             'Allow ECS to connect to RDS MySQL'
         );
-        
+
+        const dbSecret = secretsmanager.Secret.fromSecretCompleteArn(
+            this,
+            'DbSecret',
+            cdk.Fn.importValue('RdsSecretArn')
+        );
+
+        const dbHost = cdk.Fn.importValue('RdsEndpoint');
+
         const cluster = new ecs.Cluster(this, 'money-api-cluster', { vpc });
         const repo = ecr.Repository.fromRepositoryName(this, 'Repo', 'money-api');
 
@@ -47,10 +56,17 @@ export class ApiStack extends cdk.Stack {
         const container = taskDef.addContainer('AppContainer', {
             image: ecs.ContainerImage.fromEcrRepository(repo),
             logging: ecs.LogDrivers.awsLogs({ streamPrefix: 'MoneyApp' }),
-                environment: {
-                    ASPNETCORE_ENVIRONMENT: 'Production',
-                    ASPNETCORE_URLS: 'http://+:80'
-                }
+            environment: {
+                ASPNETCORE_ENVIRONMENT: 'Production',
+                ASPNETCORE_URLS: 'http://+:80',
+                DB_HOST: dbHost,
+                DB_NAME: 'moneyapp',
+            },
+            secrets: {
+                DB_USER: ecs.Secret.fromSecretsManager(dbSecret, 'username'),
+                DB_PASSWORD: ecs.Secret.fromSecretsManager(dbSecret, 'password'),
+                DB_PORT: ecs.Secret.fromSecretsManager(dbSecret, 'port')
+            }
         });
 
         container.addPortMappings({
