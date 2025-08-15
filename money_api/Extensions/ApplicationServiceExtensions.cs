@@ -29,13 +29,24 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
-        // services.AddDbContext<ApplicationDbContext>(options =>
-        //     options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
-        // );
+
+        var host = Environment.GetEnvironmentVariable("DB_HOST");
+        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+        var user = Environment.GetEnvironmentVariable("DB_USER");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        var port = Environment.GetEnvironmentVariable("DB_PORT");
+
+        if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password))
+            throw new InvalidOperationException("Database connection environment variables are not set.");
+
+        var connectionString = $"Server={host};Database={dbName};User Id={user};Password={password};Port={port}";
+
+        Console.WriteLine($"ConnectionString: {connectionString}");
+
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(
-                config.GetConnectionString("DefaultConnection"),
-                ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
+                connectionString,
+                ServerVersion.AutoDetect(connectionString)
             )
         );
 
