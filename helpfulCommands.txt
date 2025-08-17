@@ -1,0 +1,35 @@
+Commands
+
+ASP.NET
+dotnet new webapi -controllers -n <name>				(create web api project, EX: dotnet new webapi -controllers -n <name>)
+dotnet new sln								(create solution file in current directory)
+dotnet new gitignore							(generate gitignore file within dotnet project)
+dotnet ef migrations add <MigrationName>				(add a new migration)
+dotnet ef migrations add <MigrationName> -o <Folder path>		(add a new migration to the folder path, EX: dotnet ef migrations add InitialCreate -o Data/Migrations)
+dotnet ef database update 						(updates the database to a specified migration)
+
+Angular 
+npm install -g @angular/cli@17						(install angular cli and version 17)
+ng new <name>								(create angular application EX: ng new client)
+ng serve								(run angular application)
+rxjs (library for using observables and asyc programming in angular)
+use control flow (@if, @for, @switch) instead of structural directives (*ngFor, *ngIf)
+ng generate component <name>						(Creates a new, generic component definition in the given project, EX: ng generate component nav --skip-tests)
+ng generate service <name>           					(Creates a new, generic service definition in the given project, EX: ng generate service _services/account --skip-tests)
+
+AWS 
+aws configure sso
+aws ecr get-login-password --region us-west-1 --profile tony | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-west-1.amazonaws.com
+docker build -t money-api .
+docker tag money-api <account-id>.dkr.ecr.us-west-1.amazonaws.com/money-api
+docker push <account-id>.dkr.ecr.us-west-1.amazonaws.com/money-api:latest
+
+CDK
+aws sts get-caller-identity --profile <profile-name>
+cdk bootstrap aws://<account-id>/us-west-1 --profile <profile-name>
+cdk synth <stack-name>
+cdk deploy ApiStack --profile <profile-name>
+
+EC2
+ssh -i "mysql.pem" ec2-user@<ec2-public-dns>
+mysql -h <rds-endpoint> -P 3306 -u <rds-username> -p
