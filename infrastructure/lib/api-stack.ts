@@ -37,6 +37,12 @@ export class ApiStack extends cdk.Stack {
             cdk.Fn.importValue('RdsSecretArn')
         );
 
+        const jwtSecret = secretsmanager.Secret.fromSecretNameV2(
+            this,
+            "JwtKey",
+            "moneyapp/prod/jwt-signing-key"
+        );
+
         const dbHost = cdk.Fn.importValue('RdsEndpoint');
 
         const cluster = new ecs.Cluster(this, 'money-api-cluster', { vpc });
@@ -52,7 +58,6 @@ export class ApiStack extends cdk.Stack {
             resources: ['*'],
         }));
 
-
         const container = taskDef.addContainer('AppContainer', {
             image: ecs.ContainerImage.fromEcrRepository(repo),
             logging: ecs.LogDrivers.awsLogs({ streamPrefix: 'MoneyApp' }),
@@ -65,7 +70,8 @@ export class ApiStack extends cdk.Stack {
             secrets: {
                 DB_USER: ecs.Secret.fromSecretsManager(dbSecret, 'username'),
                 DB_PASSWORD: ecs.Secret.fromSecretsManager(dbSecret, 'password'),
-                DB_PORT: ecs.Secret.fromSecretsManager(dbSecret, 'port')
+                DB_PORT: ecs.Secret.fromSecretsManager(dbSecret, 'port'),
+                JWT_KEY: ecs.Secret.fromSecretsManager(jwtSecret, 'jwt_key')
             }
         });
 
