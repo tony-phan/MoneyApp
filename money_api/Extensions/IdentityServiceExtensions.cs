@@ -27,6 +27,10 @@ public static class IdentityServiceExtensions
             options.Password.RequireNonAlphanumeric = true;
         }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+        var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY") ?? config["JwtSettings:Key"];
+        if (string.IsNullOrEmpty(jwt_key))
+            throw new InvalidOperationException("jwt_key variable is not set.");
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,7 +46,7 @@ public static class IdentityServiceExtensions
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = config["JwtSettings:Issuer"],
                 ValidAudience = config["JwtSettings:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key))
             };
         });
 
