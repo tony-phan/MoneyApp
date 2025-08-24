@@ -16,6 +16,8 @@ rxjs                                                            (library for usi
 use control flow (@if, @for, @switch) instead of structural directives (*ngFor, *ngIf)
 ng generate component <name>						            (Creates a new, generic component definition in the given project, EX: ng generate component nav --skip-tests)
 ng generate service <name>           					        (Creates a new, generic service definition in the given project, EX: ng generate service _services/account --skip-tests)
+ng build --configuration production
+aws s3 sync dist/money_ui/browser/ s3://<bucket-id>/ --delete --profile tony (push updated Angular build into S3 bucket)
 
 AWS 
 aws configure sso
