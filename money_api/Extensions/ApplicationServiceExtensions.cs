@@ -13,8 +13,10 @@ namespace money_api.Extensions;
 
 public static class ApplicationServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration config)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration config,
+        IWebHostEnvironment env)
     {
         services.AddControllers().AddJsonOptions(x =>
         {
@@ -30,24 +32,27 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITransactionHistoryRepository, TransactionHistoryRepository>();
 
-        var host = Environment.GetEnvironmentVariable("DB_HOST");
-        var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-        var user = Environment.GetEnvironmentVariable("DB_USER");
-        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-        var port = Environment.GetEnvironmentVariable("DB_PORT");
+        string connectionString;
+        if (env.IsDevelopment())
+        {
+            connectionString = config.GetConnectionString("DefaultConnection");
+        }
+        else
+        {
+            var host = Environment.GetEnvironmentVariable("DB_HOST");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var user = Environment.GetEnvironmentVariable("DB_USER");
+            var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            var port = Environment.GetEnvironmentVariable("DB_PORT");
 
-        if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password))
-            throw new InvalidOperationException("Database connection environment variables are not set.");
+            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password))
+                throw new InvalidOperationException("Database connection environment variables are not set.");
 
-        var connectionString = $"Server={host};Database={dbName};User Id={user};Password={password};Port={port}";
-
-        Console.WriteLine($"ConnectionString: {connectionString}");
+            connectionString = $"Server={host};Database={dbName};User Id={user};Password={password};Port={port}";
+        }
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(
-                connectionString,
-                ServerVersion.AutoDetect(connectionString)
-            )
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
 
         // Register AutoMapper profiles
@@ -59,7 +64,6 @@ public static class ApplicationServiceExtensions
         }, typeof(AccountMappingProfile), typeof(TransactionMappingProfile), typeof(TransactionHistoryMappingProfile));
 
         services.AddCors();
-
         return services;
     }
 }
