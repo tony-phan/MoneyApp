@@ -7,8 +7,11 @@ import { UiStack } from '../lib/ui-stack';
 const app = new cdk.App();
 const env = { account: '536984667307', region: 'us-west-1' };
 
-new DbStack(app, 'DbStack', { env });
+const dbStack = new DbStack(app, 'DbStack', { env });
 
-new ApiStack(app, 'ApiStack', { env });
+const apiStack = new ApiStack(app, 'ApiStack', { env });
 
-new UiStack(app, 'UiStack', { env });
+const uiStack = new UiStack(app, 'UiStack', { env });
+
+apiStack.addDependency(dbStack);
+uiStack.addDependency(apiStack);
