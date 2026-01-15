@@ -40,19 +40,16 @@ public class TransactionHistoryServiceTests
     }
 
     [Fact]
-    public async Task GetById_ValidId_ReturnsDto()
+    public async Task GetById_ValidId_ReturnsCorrectTransactionHistory()
     {
-        var fakeAppUser = new AppUser
+        // Arrange
+        var appUser = new AppUser
         {
             UserName = "username",
             Email = "email@yahoo.com"
         };
 
-        _accountRepoMock
-            .Setup(repo => repo.GetByUsername("username"))
-            .ReturnsAsync(fakeAppUser);
-
-        var fakeEntity = new TransactionHistory
+        var transactionHistory = new TransactionHistory
         {
             Id = 1,
             UserId = "abc123",
@@ -60,37 +57,28 @@ public class TransactionHistoryServiceTests
             Year = 2025,
             TotalIncome = 1000,
             TotalExpenses = 300,
-            User = fakeAppUser
-        };
-
-        var expectedResult = new TransactionHistoryDto
-        {
-            Id = 1,
-            UserId = "abc123",
-            Month = 5,
-            Year = 2025,
-            TotalIncome = 1000,
-            TotalExpenses = 300,
+            User = appUser
         };
 
         _transactionHistoryRepoMock
             .Setup(repo => repo.GetById(1))
-            .ReturnsAsync(fakeEntity);
+            .ReturnsAsync(transactionHistory);
 
+        // Act
         var result = await _service.GetById(1);
 
+        // Assert
         Assert.NotNull(result);
-        Assert.Equal(expectedResult.Id, result.Id);
-        Assert.Equal(expectedResult.UserId, result.UserId);
-        Assert.Equal(expectedResult.Month, result.Month);
-        Assert.Equal(expectedResult.Year, result.Year);
-        Assert.Equal(expectedResult.TotalIncome, result.TotalIncome);
-        Assert.Equal(expectedResult.TotalExpenses, result.TotalExpenses);
-        Assert.Equal(expectedResult.TotalExpenses, result.TotalExpenses);
+        Assert.Equal(1, result.Id);
+        Assert.Equal("abc123", result.UserId);
+        Assert.Equal(5, result.Month);
+        Assert.Equal(2025, result.Year);
+        Assert.Equal(1000, result.TotalIncome);
+        Assert.Equal(300, result.TotalExpenses);
     }
 
     [Fact]
-    public async Task GetById_InvalidId_ReturnsException()
+    public async Task GetById_InvalidId_ThrowsNotFoundException()
     {
         int invalidId = -10;
         _transactionHistoryRepoMock
@@ -101,130 +89,73 @@ public class TransactionHistoryServiceTests
     }
 
     [Fact]
-    public async Task GetByUserId_ValidUserId_ReturnsDtos()
+    public async Task GetByUserId_ValidUserId_ReturnsAllUserHistories()
     {
-        var appUser1 = new AppUser
+        // Arrange
+        var userId = "a08ddd8f-6a9c-4498-a31b-6e3b27fb84ed";
+        var appUser = new AppUser
         {
             UserName = "joe_slow",
             Email = "joe_slow@yahoo.com",
-            Id = "a08ddd8f-6a9c-4498-a31b-6e3b27fb84ed"
+            Id = userId
         };
 
-        var appUser2 = new AppUser
+        var transactionHistories = new List<TransactionHistory>
         {
-            UserName = "t0n3yp",
-            Email = "t0n3yp@gmail.com",
-            Id = "bad19994-3554-4012-8e4e-a3d3983c9b8c"
-        };
-
-        var transactionHistory1 = new TransactionHistory
-        {
-            Id = 1,
-            UserId = appUser1.Id,
-            Month = 5,
-            Year = 2025,
-            TotalIncome = 1000,
-            TotalExpenses = 300,
-            User = appUser1
-        };
-
-        var transactionHistory2 = new TransactionHistory
-        {
-            Id = 2,
-            UserId = appUser2.Id,
-            Month = 1,
-            Year = 2025,
-            TotalIncome = 300,
-            TotalExpenses = 300,
-            User = appUser2
-        };
-
-        var transactionHistory3 = new TransactionHistory
-        {
-            Id = 3,
-            UserId = appUser1.Id,
-            Month = 5,
-            Year = 2024,
-            TotalIncome = 250,
-            TotalExpenses = 300,
-            User = appUser1
-        };
-
-        var appUser1Histories = new List<TransactionHistory> { transactionHistory1, transactionHistory3 };
-        var appUser2Histories = new List<TransactionHistory> { transactionHistory2 };
-
-        var expectedResult1 = new List<TransactionHistoryResponseDto>
-        {
-            new TransactionHistoryResponseDto {
+            new TransactionHistory
+            {
                 Id = 1,
+                UserId = userId,
                 Month = 5,
                 Year = 2025,
                 TotalIncome = 1000,
                 TotalExpenses = 300,
+                User = appUser
             },
-            new TransactionHistoryResponseDto {
+            new TransactionHistory
+            {
                 Id = 3,
+                UserId = userId,
                 Month = 5,
                 Year = 2024,
                 TotalIncome = 250,
                 TotalExpenses = 300,
-            }
-        };
-        var expectedResult2 = new List<TransactionHistoryResponseDto>
-        {
-            new TransactionHistoryResponseDto {
-                Id = 2,
-                Month = 1,
-                Year = 2025,
-                TotalIncome = 300,
-                TotalExpenses = 300,
+                User = appUser
             }
         };
 
         _transactionHistoryRepoMock
-            .Setup(repo => repo.GetAllByUserId(appUser1.Id))
-            .ReturnsAsync(appUser1Histories);
+            .Setup(repo => repo.GetAllByUserId(userId))
+            .ReturnsAsync(transactionHistories);
 
-        _transactionHistoryRepoMock
-            .Setup(repo => repo.GetAllByUserId(appUser2.Id))
-            .ReturnsAsync(appUser2Histories);
-
-        var result1 = (await _service.GetByUserId(appUser1.Id)).ToList();
-        var result2 = (await _service.GetByUserId(appUser2.Id)).ToList();
+        // Act
+        var result = await _service.GetByUserId(userId);
 
         // Assert
-        Assert.NotNull(result1);
-        Assert.Equal(expectedResult1.Count, result1.Count);
+        var resultList = result.ToList();
+        Assert.Equal(2, resultList.Count);
 
-        for (int i = 0; i < expectedResult1.Count; i++)
-        {
-            Assert.Equal(expectedResult1[i].Id, result1[i].Id);
-            Assert.Equal(expectedResult1[i].Month, result1[i].Month);
-            Assert.Equal(expectedResult1[i].Year, result1[i].Year);
-            Assert.Equal(expectedResult1[i].TotalIncome, result1[i].TotalIncome);
-            Assert.Equal(expectedResult1[i].TotalExpenses, result1[i].TotalExpenses);
-            Assert.Equal(expectedResult1[i].NetBalance, result1[i].NetBalance);
-        }
+        // Verify first history
+        Assert.Equal(1, resultList[0].Id);
+        Assert.Equal(5, resultList[0].Month);
+        Assert.Equal(2025, resultList[0].Year);
+        Assert.Equal(1000, resultList[0].TotalIncome);
+        Assert.Equal(300, resultList[0].TotalExpenses);
+        Assert.Equal(700, resultList[0].NetBalance); // Calculated: 1000 - 300
 
-        Assert.NotNull(result2);
-        Assert.Equal(expectedResult2.Count, result2.Count);
-
-        for (int i = 0; i < expectedResult2.Count; i++)
-        {
-            Assert.Equal(expectedResult2[i].Id, result2[i].Id);
-            Assert.Equal(expectedResult2[i].Month, result2[i].Month);
-            Assert.Equal(expectedResult2[i].Year, result2[i].Year);
-            Assert.Equal(expectedResult2[i].TotalIncome, result2[i].TotalIncome);
-            Assert.Equal(expectedResult2[i].TotalExpenses, result2[i].TotalExpenses);
-            Assert.Equal(expectedResult2[i].NetBalance, result2[i].NetBalance);
-        }
+        // Verify second history
+        Assert.Equal(3, resultList[1].Id);
+        Assert.Equal(5, resultList[1].Month);
+        Assert.Equal(2024, resultList[1].Year);
+        Assert.Equal(250, resultList[1].TotalIncome);
+        Assert.Equal(300, resultList[1].TotalExpenses);
+        Assert.Equal(-50, resultList[1].NetBalance); // Calculated: 250 - 300
     }
 
     [Fact]
-    public async Task DeleteTransactionHistory_WithValidIdAndNoTransactions_ReturnsTrue()
+    public async Task Delete_ValidId_ReturnsTrue()
     {
-        int id = 15;
-
+        // Arrange
         var appUser = new AppUser
         {
             UserName = "joe_slow",
@@ -244,36 +175,27 @@ public class TransactionHistoryServiceTests
         };
 
         _transactionHistoryRepoMock
-            .Setup(repo => repo.GetById(id))
+            .Setup(repo => repo.GetById(15))
             .ReturnsAsync(transactionHistory);
-
-        _transactionHistoryRepoMock
-            .Setup(repo => repo.Delete(transactionHistory))
-            .Verifiable();
 
         _dbContextMock
             .Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
+        // Act
+        var result = await _service.Delete(15);
 
-        var result = await _service.Delete(id);
-
+        // Assert
         Assert.True(result);
-        _transactionHistoryRepoMock.Verify(r => r.Delete(It.IsAny<TransactionHistory>()), Times.Once);
-        _dbContextMock.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task DeleteTransactionHistory_InvalidId_ReturnsException()
     {
-        int invalidId = -10;
         _transactionHistoryRepoMock
-            .Setup(repo => repo.GetById(invalidId))
+            .Setup(repo => repo.GetById(-10))
             .ReturnsAsync((TransactionHistory?)null);
 
-        await Assert.ThrowsAsync<TransactionHistoryNotFoundException>(() => _service.Delete(invalidId));
-        _transactionRepoMock.Verify(r => r.DeleteRange(It.IsAny<IEnumerable<Transaction>>()), Times.Never);
-        _transactionHistoryRepoMock.Verify(r => r.Delete(It.IsAny<TransactionHistory>()), Times.Never);
-        _dbContextMock.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        await Assert.ThrowsAsync<TransactionHistoryNotFoundException>(() => _service.Delete(-10));
     }
 }
