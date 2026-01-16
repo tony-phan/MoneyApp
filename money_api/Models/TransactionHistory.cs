@@ -16,6 +16,6 @@ public class TransactionHistory
     public decimal NetBalance => TotalIncome - TotalExpenses;
 
     // Navigation Properties
-    public AppUser? User { get; set; }
+    public required AppUser User { get; set; }
     public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
 }
