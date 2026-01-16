@@ -15,8 +15,8 @@ public class Transaction
     public IncomeCategory? IncomeCategory { get; set; }
     public ExpenseCategory? ExpenseCategory { get; set; }
     public string? Description { get; set; }
-    public DateTime Date { get; set; } // MM/DD/YYYY
+    public DateOnly Date { get; set; } // MM/DD/YYYY
 
     // Navigation Property
-    public required TransactionHistory TransactionHistory { get; set; }
+    public TransactionHistory? TransactionHistory { get; set; }
 }

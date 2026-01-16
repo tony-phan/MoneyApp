@@ -17,5 +17,5 @@ public class TransactionDto
     public string Description { get; set; } = string.Empty;
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-    public required DateTime Date { get; set; }
+    public required DateOnly Date { get; set; }
 }
