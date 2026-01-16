@@ -7,5 +7,5 @@ namespace money_api.Exceptions;
 
 public class TransactionDateMismtachException : Exception
 {
-    public TransactionDateMismtachException() : base("A transactions month and year must match the month and year of it's associated TransactionHistory ") { }
+    public TransactionDateMismtachException() : base("Transaction month and year must match the associated TransactionHistory month and year") { }
 }

@@ -31,7 +31,8 @@ public static class ApplicationServiceExtensions
         string connectionString;
         if (env.IsDevelopment())
         {
-            connectionString = config.GetConnectionString("DefaultConnection");
+            connectionString = config.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("DefaultConnection is not configured in appsettings.json");
         }
         else
         {

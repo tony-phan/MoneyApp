@@ -82,6 +82,8 @@ public class TransactionService : ITransactionService
         if (transaction == null)
             throw new TransactionNotFoundException(id);
 
+        ValidateUserOwnership(transaction.TransactionHistory.UserId);
+
         var transactionHistory = transaction.TransactionHistory;
 
         if (transaction.TransactionType == TransactionType.Income)
@@ -118,12 +120,9 @@ public class TransactionService : ITransactionService
         if (transaction == null)
             throw new TransactionNotFoundException(id);
 
-        var userId = _httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
-        if (userId != transaction.TransactionHistory.UserId)
-            throw new TransactionOwnershipException();
+        ValidateUserOwnership(transaction.TransactionHistory.UserId);
 
         var transactionHistory = transaction.TransactionHistory;
-
         if (transactionUpdateDto.Date.Month != transactionHistory.Month || transactionUpdateDto.Date.Year != transactionHistory.Year)
             throw new TransactionDateMismtachException();
 
@@ -165,5 +164,14 @@ public class TransactionService : ITransactionService
         var created = await _transactionHistoryRepository.Create(newHistory);
         await _dbContext.SaveChangesAsync();
         return created;
+    }
+
+    private void ValidateUserOwnership(string transactionUserId)
+    {
+        var authenticatedUserId = _httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
+        if (authenticatedUserId != transactionUserId)
+        {
+            throw new TransactionOwnershipException();
+        }
     }
 }
