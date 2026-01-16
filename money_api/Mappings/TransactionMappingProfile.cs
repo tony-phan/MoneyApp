@@ -16,7 +16,6 @@ public class TransactionMappingProfile : Profile
         // Mapping for Transaction to TransactionDto
         CreateMap<Transaction, TransactionDto>()
             .ForMember(dest => dest.TransactionType, opt => opt.MapFrom(src => src.TransactionType.ToString()))
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString()))
             .ForMember(dest => dest.IncomeCategory, opt => opt.MapFrom(src => src.IncomeCategory.HasValue ? src.IncomeCategory.ToString() : null))
             .ForMember(dest => dest.ExpenseCategory, opt => opt.MapFrom(src => src.ExpenseCategory.HasValue ? src.ExpenseCategory.ToString() : null));
     }
