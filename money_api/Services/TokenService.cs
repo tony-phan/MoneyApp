@@ -34,11 +34,16 @@ public class TokenService : ITokenService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var durationConfig = _config["JwtSettings:DurationInMinutes"];
+        if (string.IsNullOrEmpty(durationConfig) || !double.TryParse(durationConfig, out var durationInMinutes))
+            throw new InvalidOperationException("JwtSettings:DurationInMinutes is not configured or invalid.");
+
         var token = new JwtSecurityToken(
             issuer: _config["JwtSettings:Issuer"],
             audience: _config["JwtSettings:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(double.Parse(_config["JwtSettings:DurationInMinutes"])),
+            expires: DateTime.Now.AddMinutes(durationInMinutes),
             signingCredentials: creds
         );
 
