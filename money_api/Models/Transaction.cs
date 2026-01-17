@@ -18,5 +18,5 @@ public class Transaction
     public DateOnly Date { get; set; } // MM/DD/YYYY
 
     // Navigation Property
-    public required TransactionHistory TransactionHistory { get; set; }
+    public TransactionHistory TransactionHistory { get; set; } = null!;
 }
