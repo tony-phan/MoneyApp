@@ -18,3 +18,5 @@ Thumbs.db
 *.orig
 *.patch
 .fake
+money_api/appsettings.Production.json
+money_api/appsettings.Development.json
