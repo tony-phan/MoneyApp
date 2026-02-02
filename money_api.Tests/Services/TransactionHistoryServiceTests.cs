@@ -198,4 +198,170 @@ public class TransactionHistoryServiceTests
 
         await Assert.ThrowsAsync<TransactionHistoryNotFoundException>(() => _service.Delete(-10));
     }
+
+    [Fact]
+    public async Task GetAll_ReturnsAllTransactionHistories()
+    {
+        // Arrange
+        var userId = "cd7a1570-1552-4ab5-937a-87d7674eec54";
+        var userId2 = "cd7b0570-0692-4zu5-937a-88e8674wzc89";
+        var appUser = new AppUser
+        {
+            UserName = "joe_slow",
+            Email = "joe_slow@yahoo.com",
+            Id = userId
+        };
+        var appUser2 = new AppUser
+        {
+            UserName = "t0n3yp",
+            Email = "t0n3yp@yahoo.com",
+            Id = userId2
+        };
+
+        var transactionHistories = new List<TransactionHistory>
+        {
+            new TransactionHistory
+            {
+                Id = 1,
+                UserId = userId,
+                Month = 1,
+                Year = 2026,
+                TotalIncome = 503.34M,
+                TotalExpenses = 123.67M,
+                User = appUser
+            },
+            new TransactionHistory
+            {
+                Id = 2,
+                UserId = userId,
+                Month = 1,
+                Year = 2025,
+                TotalIncome = 503.34M,
+                TotalExpenses = 123.67M,
+                User = appUser
+            },
+            new TransactionHistory
+            {
+                Id = 3,
+                UserId = userId2,
+                Month = 2,
+                Year = 2023,
+                TotalIncome = 78.23M,
+                TotalExpenses = 123.67M,
+                User = appUser2
+            }
+        };
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.GetAll())
+            .ReturnsAsync(transactionHistories);
+
+        // Act
+        var result = await _service.GetAll();
+        var resultList = result.ToList();
+
+        // Assert
+        Assert.Equal(3, resultList.Count);
+        Assert.Contains(resultList, r => r.Id == 1 && r.UserId == userId);
+        Assert.Contains(resultList, r => r.Id == 2 && r.UserId == userId);
+        Assert.Contains(resultList, r => r.Id == 3 && r.UserId == userId2);
+    }
+
+    [Fact]
+    public async Task Create_WhenUserNotFound_ThrowsAccountNotFoundException()
+    {
+        // Arrange
+        var createDto = new TransactionHistoryCreateDto
+        {
+            UserId = "cd7a1570-1552-4ab5-937a-87d7674eec54",
+            Month = 2,
+            Year = 2026
+        };
+
+        _accountRepoMock
+            .Setup(repo => repo.GetById(createDto.UserId))
+            .ReturnsAsync((AppUser?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => _service.Create(createDto));
+    }
+
+    [Fact]
+    public async Task Create_WhenTransactionHistoryAlreadyExists_ThrowsDuplicateTransactionHistoryException()
+    {
+        // Arrange
+        var createDto = new TransactionHistoryCreateDto
+        {
+            UserId = "cd7a1570-1552-4ab5-937a-87d7674eec54",
+            Month = 2,
+            Year = 2026
+        };
+
+        var mockUser = new AppUser
+        {
+            Id = "cd7a1570-1552-4ab5-937a-87d7674eec54"
+        };
+
+        _accountRepoMock
+            .Setup(repo => repo.GetById(createDto.UserId))
+            .ReturnsAsync(mockUser);
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.ExistsByUserIdMonthYear(createDto.UserId, createDto.Month, createDto.Year))
+            .ReturnsAsync(true);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<DuplicateTransactionHistoryException>(() => _service.Create(createDto));
+    }
+
+    [Fact]
+    public async Task Create_WhenUserExists_CreatesTransactionHistoryWithZeroTotals()
+    {
+        // Arrange
+        var createDto = new TransactionHistoryCreateDto
+        {
+            UserId = "cd7a1570-1552-4ab5-937a-87d7674eec54",
+            Month = 2,
+            Year = 2026
+        };
+
+        var mockUser = new AppUser
+        {
+            Id = "cd7a1570-1552-4ab5-937a-87d7674eec54"
+        };
+
+        var createdTransactionHistory = new TransactionHistory
+        {
+            Id = 1, // Repository would assign this
+            UserId = mockUser.Id,
+            Month = 2,
+            Year = 2026,
+            TotalIncome = 0,
+            TotalExpenses = 0,
+            User = mockUser
+        };
+
+        _accountRepoMock
+            .Setup(repo => repo.GetById(mockUser.Id))
+            .ReturnsAsync(mockUser);
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.ExistsByUserIdMonthYear(createDto.UserId, createDto.Month, createDto.Year))
+            .ReturnsAsync(false);
+
+        _transactionHistoryRepoMock
+            .Setup(repo => repo.Create(It.IsAny<TransactionHistory>()))
+            .ReturnsAsync(createdTransactionHistory);
+
+        // Act
+        var result = await _service.Create(createDto);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("cd7a1570-1552-4ab5-937a-87d7674eec54", result.UserId);
+        Assert.Equal(2, result.Month);
+        Assert.Equal(2026, result.Year);
+        Assert.Equal(0, result.TotalIncome);
+        Assert.Equal(0, result.TotalExpenses);
+    }
 }
